@@ -25,9 +25,14 @@ jobs:
         uses: actions/configure-pages@v5
 
       - name: Copy web/ to site root
+        shell: bash
         run: |
           mkdir -p _site
-          cp -r web/* _site/
+          cp -r web/. _site/
+          echo "=== _site 内容 ==="
+          find _site -type f | sort
+          echo "=== web 源内容 ==="
+          find web -type f | sort
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
