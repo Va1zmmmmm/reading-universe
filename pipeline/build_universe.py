@@ -59,14 +59,17 @@ def main():
         if not tags:
             continue
         b = by_id.get(bid, {})
+        # notes 兼容两种格式：int（脱敏版）或 {"total": n}（weread 原始）
+        n_total = b.get("notes")
+        if isinstance(n_total, dict):
+            n_total = n_total.get("total", 0)
         books.append({
             "id": bid,
             "title": info.get("title") or b.get("title", ""),
             "author": b.get("author", ""),
             "rt": b.get("readingTime", 0),               # 阅读时长（秒）→ 恒星半径
-            "notes": b.get("notes", {}).get("total", 0),  # 笔记密度 → 恒星亮度
-            "finished": fmt_time(b.get("finishTime")),
-            "aff": b.get("affectionLevel", ""),
+            "notes": n_total or 0,                        # 笔记密度 → 恒星亮度
+            "finished": bool(b.get("finished", b.get("finishTime"))),
             "tags": tags,
             # 主星系 = 该书最稀有的标签：把书挂进它最独特的星系，39 个星系分布更匀
             "theme": min(tags, key=lambda t: tag_count[t]),

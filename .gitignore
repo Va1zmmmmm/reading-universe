@@ -4,13 +4,12 @@ __pycache__/
 .venv/
 venv/
 
-# 本地真实数据——绝不上传（公开仓库只放合成的 demo 数据）
-data/books.json
-data/theme_tags.json
-data/themes/
-
-# 编辑器 / 系统
+# 本地工具/临时
 .DS_Store
 Thumbs.db
 .idea/
 .vscode/
+*.log
+
+# 打标中间产物（手动模式生成，不提交）
+data/_tagging_sheet.md

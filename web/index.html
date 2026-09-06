@@ -202,7 +202,7 @@ const allNodes = G.nodes.map(n => ({
   size: n.group === 'read' ? (POSTER ? 5 : 3) : undefined,
   x: n._x, y: n._y,
   fixed: n.group === 'read',
-  title: `${n.label}${n.author ? '｜' + n.author : ''}${n.finished ? '｜读完 ' + n.finished : ''}${n.rating ? '｜' + n.rating : ''}｜被连线 ${n.mentions} 次`,
+  title: `${n.label}${n.author ? '｜' + n.author : ''}｜被连线 ${n.mentions} 次`,
   _raw: n,
 }));
 const allEdges = G.edges.map((e, i) => ({
@@ -280,7 +280,7 @@ function showPanel(id) {
     }).join('');
   panel.innerHTML = `<span class="close" onclick="panel.style.display='none'">✕</span>
     <h3>${n.label}</h3>
-    <div class="meta">${n.author || ''} ${n.finished ? '· 读完 ' + n.finished : ''} ${n.rating ? '· ' + n.rating : ''}</div>
+    <div class="meta">${n.author || ''}</div>
     ${rel}`;
   panel.style.display = 'block';
 }
@@ -327,7 +327,7 @@ document.getElementById('themeLayer').addEventListener('change', ev => {
         `<span style="display:inline-block;background:#232a38;border-radius:8px;padding:1px 8px;margin:2px 4px 2px 0;color:#a9c8f0">${escHtml(t)}</span>`).join('');
       panel.innerHTML = `<span class="close" onclick="panel.style.display='none'">✕</span>
         <h3>${b.comet ? '☄ ' : '⭐ '}${escHtml(b.title)}</h3>
-        <div class="meta">${escHtml(b.author || '')}${b.finished ? ' · 读完 ' + b.finished : ''}${b.aff ? ' · ' + b.aff : ''}</div>
+        <div class="meta">${escHtml(b.author || '')}</div>
         <div class="meta">阅读 ${(b.rt / 3600).toFixed(1)} 小时 · 笔记 ${b.notes} 条${b.comet ? ' · 主题离群书' : ''}</div>
         <div>${tagHtml}</div>
         <div class="meta" style="margin-top:6px">所属星系：✦ ${escHtml(b.theme)}</div>`;

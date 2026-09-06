@@ -1,0 +1,2695 @@
+{
+ "syncedAt": "2026-09-06T15:00:33.109Z",
+ "totalBooks": 336,
+ "note": "脱敏版：去掉逐书读完日期/评分/书评/封面，保留书名作者阅读时长笔记数（聚合可视化所需）。",
+ "books": [
+  {
+   "bookId": "36212379",
+   "title": "镜子之家（三岛由纪夫作品系列）",
+   "author": "三岛由纪夫",
+   "readingTime": 9353,
+   "notes": 57,
+   "finished": false
+  },
+  {
+   "bookId": "3300139094",
+   "title": "洋果子店的午后",
+   "author": "[日]小川洋子",
+   "readingTime": 5458,
+   "notes": 16,
+   "finished": true
+  },
+  {
+   "bookId": "3300067776",
+   "title": "明亮的夜晚",
+   "author": "崔恩荣",
+   "readingTime": 20602,
+   "notes": 52,
+   "finished": true
+  },
+  {
+   "bookId": "CB_D9A2QO2QK8tY76475U2HT9oR",
+   "title": "第三十九条-初稿全本-20260830",
+   "author": "",
+   "readingTime": 2916,
+   "notes": 13,
+   "finished": false
+  },
+  {
+   "bookId": "CB_1qMDtiDtM8h976375U2dS5AE",
+   "title": "第三十九条-初稿全本-20260830",
+   "author": "",
+   "readingTime": 3720,
+   "notes": 32,
+   "finished": false
+  },
+  {
+   "bookId": "925981",
+   "title": "刺杀骑士团长",
+   "author": "[日]村上春树",
+   "readingTime": 25913,
+   "notes": 92,
+   "finished": true
+  },
+  {
+   "bookId": "23796416",
+   "title": "无缘社会",
+   "author": "NHK 特别节目录制组",
+   "readingTime": 12143,
+   "notes": 31,
+   "finished": true
+  },
+  {
+   "bookId": "3300020527",
+   "title": "解忧杂货店",
+   "author": "东野圭吾",
+   "readingTime": 14085,
+   "notes": 22,
+   "finished": true
+  },
+  {
+   "bookId": "35551088",
+   "title": "蛤蟆先生去看心理医生",
+   "author": "罗伯特·戴博德",
+   "readingTime": 9481,
+   "notes": 34,
+   "finished": true
+  },
+  {
+   "bookId": "857266",
+   "title": "诊疗椅上的谎言",
+   "author": "[美]欧文·亚隆",
+   "readingTime": 27141,
+   "notes": 135,
+   "finished": true
+  },
+  {
+   "bookId": "35652962",
+   "title": "午后曳航（三岛由纪夫作品系列）",
+   "author": "三岛由纪夫",
+   "readingTime": 6702,
+   "notes": 17,
+   "finished": true
+  },
+  {
+   "bookId": "27754182",
+   "title": "疾风号",
+   "author": "伊坂幸太郎",
+   "readingTime": 18773,
+   "notes": 1,
+   "finished": true
+  },
+  {
+   "bookId": "3300161719",
+   "title": "我的心渴望一种更加惊险的生活（果麦经典）",
+   "author": "[英]毛姆",
+   "readingTime": 12992,
+   "notes": 34,
+   "finished": true
+  },
+  {
+   "bookId": "3300046359",
+   "title": "暮色将尽",
+   "author": "[英]戴安娜·阿西尔",
+   "readingTime": 8935,
+   "notes": 12,
+   "finished": true
+  },
+  {
+   "bookId": "CB_ACW4HeF7UCZ374d75UH22CVo",
+   "title": "想象海",
+   "author": "朱岳",
+   "readingTime": 5032,
+   "notes": 1,
+   "finished": true
+  },
+  {
+   "bookId": "3300058810",
+   "title": "伊万·伊利奇之死（果麦经典）",
+   "author": "列夫·托尔斯泰",
+   "readingTime": 5774,
+   "notes": 24,
+   "finished": true
+  },
+  {
+   "bookId": "3300168949",
+   "title": "我是寨子里长大的女孩（节选）",
+   "author": "扎十一惹",
+   "readingTime": 1743,
+   "notes": 5,
+   "finished": true
+  },
+  {
+   "bookId": "23031772",
+   "title": "西西弗神话（果麦经典）",
+   "author": "[法]加缪",
+   "readingTime": 23443,
+   "notes": 71,
+   "finished": true
+  },
+  {
+   "bookId": "23796272",
+   "title": "箱男",
+   "author": "[日]安部公房",
+   "readingTime": 9763,
+   "notes": 12,
+   "finished": true
+  },
+  {
+   "bookId": "23796274",
+   "title": "砂女",
+   "author": "[日]安部公房",
+   "readingTime": 12576,
+   "notes": 19,
+   "finished": true
+  },
+  {
+   "bookId": "3300140637",
+   "title": "山月记",
+   "author": "[日]中岛敦",
+   "readingTime": 5904,
+   "notes": 4,
+   "finished": true
+  },
+  {
+   "bookId": "3300014694",
+   "title": "有限与无限的游戏：一个哲学家眼中的竞技世界",
+   "author": "[美]詹姆斯·卡斯",
+   "readingTime": 17773,
+   "notes": 52,
+   "finished": true
+  },
+  {
+   "bookId": "29821793",
+   "title": "日本世相系列：饱食穷民",
+   "author": "斋藤茂男",
+   "readingTime": 11179,
+   "notes": 47,
+   "finished": true
+  },
+  {
+   "bookId": "852904",
+   "title": "银河铁道之夜（果麦经典）",
+   "author": "宫泽贤治",
+   "readingTime": 13272,
+   "notes": 2,
+   "finished": true
+  },
+  {
+   "bookId": "41598972",
+   "title": "工作、消费主义和新穷人",
+   "author": "齐格蒙特·鲍曼",
+   "readingTime": 16054,
+   "notes": 61,
+   "finished": true
+  },
+  {
+   "bookId": "3300076365",
+   "title": "沉默",
+   "author": "远藤周作",
+   "readingTime": 8962,
+   "notes": 8,
+   "finished": true
+  },
+  {
+   "bookId": "26278269",
+   "title": "苏轼传",
+   "author": "王水照 崔铭",
+   "readingTime": 28464,
+   "notes": 2,
+   "finished": true
+  },
+  {
+   "bookId": "3300156695",
+   "title": "余华写作课：我能否相信自己",
+   "author": "余华",
+   "readingTime": 7233,
+   "notes": 12,
+   "finished": true
+  },
+  {
+   "bookId": "927008",
+   "title": "生吞",
+   "author": "郑执",
+   "readingTime": 11249,
+   "notes": 2,
+   "finished": true
+  },
+  {
+   "bookId": "3300061190",
+   "title": "星期一，喝抹茶",
+   "author": "青山美智子",
+   "readingTime": 2264,
+   "notes": 2,
+   "finished": true
+  },
+  {
+   "bookId": "3300110730",
+   "title": "那些少女没有抵达",
+   "author": "吴晓乐",
+   "readingTime": 13232,
+   "notes": 25,
+   "finished": true
+  },
+  {
+   "bookId": "3300191756",
+   "title": "沉思录",
+   "author": "[古罗马]马可·奥勒留",
+   "readingTime": 16636,
+   "notes": 41,
+   "finished": true
+  },
+  {
+   "bookId": "3300144009",
+   "title": "赞美闲散（独家首发）",
+   "author": "[英]伯特兰·罗素",
+   "readingTime": 13551,
+   "notes": 31,
+   "finished": true
+  },
+  {
+   "bookId": "3300003465",
+   "title": "爱的饥渴",
+   "author": "三岛由纪夫",
+   "readingTime": 15109,
+   "notes": 17,
+   "finished": true
+  },
+  {
+   "bookId": "3300127612",
+   "title": "无条件投降博物馆",
+   "author": "[荷]杜布拉夫卡·乌格雷西奇",
+   "readingTime": 17909,
+   "notes": 39,
+   "finished": true
+  },
+  {
+   "bookId": "3300023559",
+   "title": "偶像失格",
+   "author": "宇佐见铃",
+   "readingTime": 2890,
+   "notes": 1,
+   "finished": true
+  },
+  {
+   "bookId": "43896730",
+   "title": "慢（米兰·昆德拉作品系列·2022版）",
+   "author": "[法]米兰·昆德拉",
+   "readingTime": 6370,
+   "notes": 12,
+   "finished": true
+  },
+  {
+   "bookId": "3300074783",
+   "title": "爱的荒漠",
+   "author": "[法]弗朗索瓦·莫里亚克/尹永达 译",
+   "readingTime": 11726,
+   "notes": 23,
+   "finished": true
+  },
+  {
+   "bookId": "3300003471",
+   "title": "禁色",
+   "author": "三岛由纪夫",
+   "readingTime": 32518,
+   "notes": 37,
+   "finished": true
+  },
+  {
+   "bookId": "3300042998",
+   "title": "奔跑吧，爸爸",
+   "author": "金爱烂",
+   "readingTime": 9328,
+   "notes": 11,
+   "finished": true
+  },
+  {
+   "bookId": "3300135765",
+   "title": "永无止尽的狂热：三岛由纪夫",
+   "author": "杨照",
+   "readingTime": 12571,
+   "notes": 19,
+   "finished": true
+  },
+  {
+   "bookId": "33627956",
+   "title": "推销员之死（阿瑟·米勒作品系列）",
+   "author": "阿瑟·米勒",
+   "readingTime": 5178,
+   "notes": 1,
+   "finished": true
+  },
+  {
+   "bookId": "3300052230",
+   "title": "荒原狼（果麦经典）",
+   "author": "[德]赫尔曼·黑塞",
+   "readingTime": 12868,
+   "notes": 19,
+   "finished": true
+  },
+  {
+   "bookId": "812905",
+   "title": "霸王别姬（2020版｜同名电影原著）",
+   "author": "李碧华",
+   "readingTime": 7436,
+   "notes": 4,
+   "finished": true
+  },
+  {
+   "bookId": "CB_CK8D68Bp27oi7c071E28a4gz",
+   "title": "其后",
+   "author": "赖香吟",
+   "readingTime": 17130,
+   "notes": 26,
+   "finished": true
+  },
+  {
+   "bookId": "3300142515",
+   "title": "蛇结（果麦经典）",
+   "author": "[法]弗朗索瓦·莫里亚克",
+   "readingTime": 8853,
+   "notes": 5,
+   "finished": true
+  },
+  {
+   "bookId": "3300010546",
+   "title": "不止读书",
+   "author": "魏小河",
+   "readingTime": 6723,
+   "notes": 10,
+   "finished": true
+  },
+  {
+   "bookId": "22523964",
+   "title": "如父如子（同名电影原著）",
+   "author": "是枝裕和 佐野晶",
+   "readingTime": 6754,
+   "notes": 1,
+   "finished": true
+  },
+  {
+   "bookId": "3300084111",
+   "title": "大地上我们转瞬即逝的绚烂",
+   "author": "[美]王鸥行",
+   "readingTime": 10444,
+   "notes": 8,
+   "finished": true
+  },
+  {
+   "bookId": "34853929",
+   "title": "无限近似于透明的蓝（村上龙作品集）",
+   "author": "村上龙",
+   "readingTime": 7761,
+   "notes": 8,
+   "finished": true
+  },
+  {
+   "bookId": "3300164872",
+   "title": "理想国：新译与导读",
+   "author": "[古希腊]柏拉图",
+   "readingTime": 89381,
+   "notes": 42,
+   "finished": true
+  },
+  {
+   "bookId": "34109111",
+   "title": "春宵苦短，少女前进吧！",
+   "author": "森见登美彦",
+   "readingTime": 13892,
+   "notes": 7,
+   "finished": true
+  },
+  {
+   "bookId": "40933504",
+   "title": "包法利夫人",
+   "author": "[法]居斯塔夫·福楼拜",
+   "readingTime": 26086,
+   "notes": 14,
+   "finished": true
+  },
+  {
+   "bookId": "3300075589",
+   "title": "拂晓的一切（电影《黎明的一切》原著）",
+   "author": "濑尾麻衣子",
+   "readingTime": 4909,
+   "notes": 2,
+   "finished": true
+  },
+  {
+   "bookId": "24240795",
+   "title": "撒旦探戈（2025诺奖得主作品）",
+   "author": "[匈牙利]克拉斯诺霍尔卡伊·拉斯洛",
+   "readingTime": 19026,
+   "notes": 7,
+   "finished": true
+  },
+  {
+   "bookId": "3300066187",
+   "title": "快乐的死",
+   "author": "[法]加缪",
+   "readingTime": 9572,
+   "notes": 19,
+   "finished": true
+  },
+  {
+   "bookId": "3300119145",
+   "title": "智人之上 ——从石器时代到 AI 时代的信息网络简史",
+   "author": "[以]尤瓦尔·赫拉利",
+   "readingTime": 25012,
+   "notes": 17,
+   "finished": true
+  },
+  {
+   "bookId": "27661791",
+   "title": "夏洛的网",
+   "author": "E.B.怀特",
+   "readingTime": 4429,
+   "notes": 3,
+   "finished": true
+  },
+  {
+   "bookId": "3300140731",
+   "title": "余华文学课：九岁的委屈和九十岁的委屈",
+   "author": "余华",
+   "readingTime": 6642,
+   "notes": 2,
+   "finished": true
+  },
+  {
+   "bookId": "3300082688",
+   "title": "庆祝无意义（米兰·昆德拉作品系列·2022版）",
+   "author": "[法]米兰·昆德拉",
+   "readingTime": 3913,
+   "notes": 1,
+   "finished": true
+  },
+  {
+   "bookId": "CB_9Sx7rB8s59Mb6uZ6xR052EYa",
+   "title": "不在他方 Placeless Place.pdf",
+   "author": "",
+   "readingTime": 7609,
+   "notes": 18,
+   "finished": true
+  },
+  {
+   "bookId": "24919677",
+   "title": "小说课",
+   "author": "毕飞宇",
+   "readingTime": 6198,
+   "notes": 3,
+   "finished": true
+  },
+  {
+   "bookId": "3300160447",
+   "title": "桃花源没事儿",
+   "author": "马伯庸",
+   "readingTime": 7696,
+   "notes": 1,
+   "finished": true
+  },
+  {
+   "bookId": "3300024956",
+   "title": "纯粹·一个人的马拉松",
+   "author": "黄春华",
+   "readingTime": 5052,
+   "notes": 5,
+   "finished": true
+  },
+  {
+   "bookId": "22737189",
+   "title": "病隙碎笔",
+   "author": "史铁生",
+   "readingTime": 17001,
+   "notes": 18,
+   "finished": true
+  },
+  {
+   "bookId": "25079409",
+   "title": "初恋",
+   "author": "屠格涅夫",
+   "readingTime": 3671,
+   "notes": 3,
+   "finished": true
+  },
+  {
+   "bookId": "3300048761",
+   "title": "鱼不存在",
+   "author": "露露·米勒",
+   "readingTime": 7616,
+   "notes": 11,
+   "finished": true
+  },
+  {
+   "bookId": "3300111368",
+   "title": "然后，活下去",
+   "author": "[日]坂元裕二",
+   "readingTime": 3396,
+   "notes": 1,
+   "finished": true
+  },
+  {
+   "bookId": "3300148779",
+   "title": "克林索尔的最后夏天（知书经典）",
+   "author": "[德]赫尔曼·黑塞",
+   "readingTime": 8398,
+   "notes": 9,
+   "finished": true
+  },
+  {
+   "bookId": "3300059686",
+   "title": "夜晚的潜水艇",
+   "author": "陈春成",
+   "readingTime": 8470,
+   "notes": 4,
+   "finished": true
+  },
+  {
+   "bookId": "22910624",
+   "title": "人间便利店",
+   "author": "村田沙耶香",
+   "readingTime": 2603,
+   "notes": 1,
+   "finished": true
+  },
+  {
+   "bookId": "3300075275",
+   "title": "疼痛部",
+   "author": "杜布拉夫卡·乌格雷西奇",
+   "readingTime": 11492,
+   "notes": 3,
+   "finished": true
+  },
+  {
+   "bookId": "3300003479",
+   "title": "仲夏之死",
+   "author": "三岛由纪夫",
+   "readingTime": 11722,
+   "notes": 6,
+   "finished": true
+  },
+  {
+   "bookId": "3300022941",
+   "title": "厨房（特精版）",
+   "author": "吉本芭娜娜",
+   "readingTime": 2954,
+   "notes": 2,
+   "finished": true
+  },
+  {
+   "bookId": "CB_0NQFpMFpB7cJ6x16xG3pjFUN",
+   "title": "龙族：重启人生 (念头不通达) (Z-Library)",
+   "author": "QQ:511595420",
+   "readingTime": 98895,
+   "notes": 1,
+   "finished": true
+  },
+  {
+   "bookId": "933329",
+   "title": "龙族Ⅱ：悼亡者之瞳",
+   "author": "江南",
+   "readingTime": 3329,
+   "notes": 4,
+   "finished": true
+  },
+  {
+   "bookId": "933328",
+   "title": "龙族Ⅰ：火之晨曦",
+   "author": "江南",
+   "readingTime": 14393,
+   "notes": 2,
+   "finished": true
+  },
+  {
+   "bookId": "3300117257",
+   "title": "不上班咖啡馆",
+   "author": "古典",
+   "readingTime": 8449,
+   "notes": 4,
+   "finished": true
+  },
+  {
+   "bookId": "28394090",
+   "title": "哈姆雷特",
+   "author": "莎士比亚",
+   "readingTime": 4745,
+   "notes": 1,
+   "finished": true
+  },
+  {
+   "bookId": "3300030519",
+   "title": "当我们不再理解世界（短经典精选）",
+   "author": "本哈明·拉巴图特",
+   "readingTime": 6273,
+   "notes": 3,
+   "finished": true
+  },
+  {
+   "bookId": "3300044717",
+   "title": "三重门",
+   "author": "韩寒",
+   "readingTime": 10321,
+   "notes": 2,
+   "finished": true
+  },
+  {
+   "bookId": "806148",
+   "title": "皮格马利翁效应",
+   "author": "乔塞尔森",
+   "readingTime": 12595,
+   "notes": 12,
+   "finished": true
+  },
+  {
+   "bookId": "3300066685",
+   "title": "白鲸",
+   "author": "赫尔曼·梅尔维尔",
+   "readingTime": 1957,
+   "notes": 1,
+   "finished": false
+  },
+  {
+   "bookId": "3300044722",
+   "title": "可爱的洪水猛兽（2014）",
+   "author": "韩寒",
+   "readingTime": 5558,
+   "notes": 1,
+   "finished": true
+  },
+  {
+   "bookId": "907272",
+   "title": "广岛之恋（法国同名电影原著）",
+   "author": "[法]玛格丽特·杜拉斯",
+   "readingTime": 3002,
+   "notes": 2,
+   "finished": true
+  },
+  {
+   "bookId": "3300053589",
+   "title": "十三邀1：“我还是更喜欢失败者”",
+   "author": "许知远",
+   "readingTime": 12639,
+   "notes": 5,
+   "finished": true
+  },
+  {
+   "bookId": "22393784",
+   "title": "眠",
+   "author": "[日]村上春树",
+   "readingTime": 1634,
+   "notes": 7,
+   "finished": true
+  },
+  {
+   "bookId": "26713355",
+   "title": "你当像鸟飞往你的山",
+   "author": "[美]塔拉·韦斯特弗",
+   "readingTime": 11999,
+   "notes": 16,
+   "finished": true
+  },
+  {
+   "bookId": "3300003469",
+   "title": "假面的告白",
+   "author": "三岛由纪夫",
+   "readingTime": 7168,
+   "notes": 10,
+   "finished": true
+  },
+  {
+   "bookId": "3300070982",
+   "title": "容易忘记的名字",
+   "author": "金爱烂",
+   "readingTime": 6769,
+   "notes": 18,
+   "finished": true
+  },
+  {
+   "bookId": "37724853",
+   "title": "终究悲哀的外国语",
+   "author": "[日]村上春树",
+   "readingTime": 6361,
+   "notes": 11,
+   "finished": true
+  },
+  {
+   "bookId": "932498",
+   "title": "存在主义咖啡馆：自由、存在和杏子鸡尾酒",
+   "author": "莎拉·贝克韦尔",
+   "readingTime": 19611,
+   "notes": 41,
+   "finished": true
+  },
+  {
+   "bookId": "35523640",
+   "title": "丰饶之海（第四卷）：天人五衰",
+   "author": "三岛由纪夫",
+   "readingTime": 11766,
+   "notes": 34,
+   "finished": true
+  },
+  {
+   "bookId": "35523638",
+   "title": "丰饶之海（第三卷）：晓寺",
+   "author": "三岛由纪夫",
+   "readingTime": 14499,
+   "notes": 27,
+   "finished": true
+  },
+  {
+   "bookId": "35523636",
+   "title": "丰饶之海（第二卷）：奔马",
+   "author": "三岛由纪夫",
+   "readingTime": 15589,
+   "notes": 34,
+   "finished": true
+  },
+  {
+   "bookId": "35523642",
+   "title": "丰饶之海（第一卷）：春雪",
+   "author": "三岛由纪夫",
+   "readingTime": 14263,
+   "notes": 20,
+   "finished": true
+  },
+  {
+   "bookId": "33915626",
+   "title": "爱的八次约会",
+   "author": "约翰·戈特曼 朱莉·施瓦茨·戈特曼 瑞秋·卡尔顿·艾布拉姆斯 道格·艾布拉姆斯",
+   "readingTime": 583,
+   "notes": 1,
+   "finished": true
+  },
+  {
+   "bookId": "3300070987",
+   "title": "外面是夏天",
+   "author": "金爱烂",
+   "readingTime": 6912,
+   "notes": 15,
+   "finished": true
+  },
+  {
+   "bookId": "3300058968",
+   "title": "3分钟哲学：一本关于伟大想法的小书",
+   "author": "乔尼·汤姆森",
+   "readingTime": 11680,
+   "notes": 12,
+   "finished": true
+  },
+  {
+   "bookId": "27001113",
+   "title": "人面桃花（江南·第一部）",
+   "author": "格非",
+   "readingTime": 10446,
+   "notes": 2,
+   "finished": true
+  },
+  {
+   "bookId": "3300043001",
+   "title": "我的忐忑人生",
+   "author": "金爱烂",
+   "readingTime": 7478,
+   "notes": 12,
+   "finished": true
+  },
+  {
+   "bookId": "3300082490",
+   "title": "我想成为你的眼泪",
+   "author": "四季大雅",
+   "readingTime": 5289,
+   "notes": 15,
+   "finished": true
+  },
+  {
+   "bookId": "27689981",
+   "title": "女生徒（果麦经典）",
+   "author": "太宰治",
+   "readingTime": 5083,
+   "notes": 5,
+   "finished": true
+  },
+  {
+   "bookId": "857263",
+   "title": "无比芜杂的心绪",
+   "author": "[日]村上春树",
+   "readingTime": 13173,
+   "notes": 24,
+   "finished": true
+  },
+  {
+   "bookId": "3300109335",
+   "title": "燕食记（第十一届茅盾文学奖提名作品）",
+   "author": "葛亮",
+   "readingTime": 21315,
+   "notes": 3,
+   "finished": true
+  },
+  {
+   "bookId": "3300037621",
+   "title": "四叠半神话大系（同名日漫原著）",
+   "author": "森见登美彦",
+   "readingTime": 5492,
+   "notes": 2,
+   "finished": true
+  },
+  {
+   "bookId": "846683",
+   "title": "黄雀记",
+   "author": "苏童",
+   "readingTime": 13019,
+   "notes": 1,
+   "finished": true
+  },
+  {
+   "bookId": "3300018646",
+   "title": "平原上的摩西（刘昊然、董子健主演电影《我的朋友安德烈》原著）",
+   "author": "双雪涛",
+   "readingTime": 11295,
+   "notes": 9,
+   "finished": true
+  },
+  {
+   "bookId": "33483909",
+   "title": "绝叫（同名日剧原著）",
+   "author": "叶真中显",
+   "readingTime": 11695,
+   "notes": 15,
+   "finished": true
+  },
+  {
+   "bookId": "3300070788",
+   "title": "存在主义心理学的邀请",
+   "author": "博·雅各布森",
+   "readingTime": 12910,
+   "notes": 37,
+   "finished": true
+  },
+  {
+   "bookId": "3300134036",
+   "title": "财经（2025年第4期）",
+   "author": "财经",
+   "readingTime": 5098,
+   "notes": 3,
+   "finished": true
+  },
+  {
+   "bookId": "3300064734",
+   "title": "樱桃（太宰治精选集）",
+   "author": "太宰治",
+   "readingTime": 7566,
+   "notes": 9,
+   "finished": true
+  },
+  {
+   "bookId": "3300104650",
+   "title": "水门的洞口",
+   "author": "黄国峻",
+   "readingTime": 5789,
+   "notes": 23,
+   "finished": true
+  },
+  {
+   "bookId": "35433088",
+   "title": "弃猫：当我谈起父亲时",
+   "author": "[日]村上春树",
+   "readingTime": 1323,
+   "notes": 4,
+   "finished": true
+  },
+  {
+   "bookId": "3300117515",
+   "title": "仿生人会梦见电子羊吗？",
+   "author": "[美]菲利普·迪克",
+   "readingTime": 10130,
+   "notes": 20,
+   "finished": true
+  },
+  {
+   "bookId": "3300075042",
+   "title": "古都（川端康成作品系列）",
+   "author": "川端康成",
+   "readingTime": 5166,
+   "notes": 2,
+   "finished": true
+  },
+  {
+   "bookId": "25424219",
+   "title": "地下2：应许之地",
+   "author": "[日]村上春树",
+   "readingTime": 7701,
+   "notes": 13,
+   "finished": true
+  },
+  {
+   "bookId": "3300061918",
+   "title": "献给爱与子宫的花束",
+   "author": "[日]铃木凉美",
+   "readingTime": 5938,
+   "notes": 8,
+   "finished": true
+  },
+  {
+   "bookId": "3300047434",
+   "title": "堂吉诃德的眼镜：小说细读十二讲",
+   "author": "张秋子",
+   "readingTime": 20051,
+   "notes": 61,
+   "finished": true
+  },
+  {
+   "bookId": "36610122",
+   "title": "燃烧的原野（鲁尔福三部曲）",
+   "author": "胡安·鲁尔福",
+   "readingTime": 1310,
+   "notes": 2,
+   "finished": false
+  },
+  {
+   "bookId": "24223849",
+   "title": "门",
+   "author": "夏目漱石",
+   "readingTime": 8295,
+   "notes": 20,
+   "finished": true
+  },
+  {
+   "bookId": "23826205",
+   "title": "小偷家族（新版）",
+   "author": "是枝裕和",
+   "readingTime": 4825,
+   "notes": 5,
+   "finished": true
+  },
+  {
+   "bookId": "26835068",
+   "title": "夜半蜘蛛猴",
+   "author": "[日]村上春树",
+   "readingTime": 2348,
+   "notes": 6,
+   "finished": true
+  },
+  {
+   "bookId": "934369",
+   "title": "第二性（合卷本）",
+   "author": "[法]西蒙娜·德·波伏瓦",
+   "readingTime": 76104,
+   "notes": 158,
+   "finished": true
+  },
+  {
+   "bookId": "40958936",
+   "title": "69",
+   "author": "村上龙",
+   "readingTime": 5070,
+   "notes": 14,
+   "finished": true
+  },
+  {
+   "bookId": "26713587",
+   "title": "快乐（青山七惠作品系列）",
+   "author": "青山七惠",
+   "readingTime": 6982,
+   "notes": 10,
+   "finished": true
+  },
+  {
+   "bookId": "3300124452",
+   "title": "村上春树的音乐异想世界：用音乐治愈疲惫的灵魂",
+   "author": "[日]村上春树",
+   "readingTime": 181,
+   "notes": 2,
+   "finished": true
+  },
+  {
+   "bookId": "3300003425",
+   "title": "教育的另一种可能",
+   "author": "查敏 钟磬等",
+   "readingTime": 8518,
+   "notes": 18,
+   "finished": true
+  },
+  {
+   "bookId": "3300054936",
+   "title": "作家榜名著：浮士德",
+   "author": "歌德",
+   "readingTime": 13715,
+   "notes": 22,
+   "finished": true
+  },
+  {
+   "bookId": "24147316",
+   "title": "都柏林人（译文经典）",
+   "author": "[爱尔兰]詹姆斯·乔伊斯",
+   "readingTime": 9976,
+   "notes": 14,
+   "finished": true
+  },
+  {
+   "bookId": "CB_Gji80o80K4Lg6sa6tJGPR079",
+   "title": "欢迎来到实力至上主义的教室 2年级篇 12.5",
+   "author": "衣笠彰梧",
+   "readingTime": 5054,
+   "notes": 1,
+   "finished": true
+  },
+  {
+   "bookId": "842277",
+   "title": "天真的和感伤的小说家（珍藏版）",
+   "author": "[土]奥尔罕·帕慕克",
+   "readingTime": 9532,
+   "notes": 33,
+   "finished": true
+  },
+  {
+   "bookId": "30809585",
+   "title": "漫长的告别（译文经典）",
+   "author": "雷蒙德·钱德勒",
+   "readingTime": 18010,
+   "notes": 21,
+   "finished": true
+  },
+  {
+   "bookId": "CB_3lZAE5AFB5Xm6sM6tJ6NDAlw",
+   "title": "继母的拖油瓶是我的前女友 - 12",
+   "author": "たかやKi",
+   "readingTime": 3155,
+   "notes": 2,
+   "finished": true
+  },
+  {
+   "bookId": "31808217",
+   "title": "白夜（陀思妥耶夫斯基文集2015）",
+   "author": "陀思妥耶夫斯基",
+   "readingTime": 14319,
+   "notes": 15,
+   "finished": true
+  },
+  {
+   "bookId": "3300004377",
+   "title": "阿城文集之三：威尼斯日记",
+   "author": "阿城",
+   "readingTime": 3361,
+   "notes": 7,
+   "finished": true
+  },
+  {
+   "bookId": "35806545",
+   "title": "毛姆的书单",
+   "author": "威廉·萨默塞特·毛姆",
+   "readingTime": 5788,
+   "notes": 12,
+   "finished": true
+  },
+  {
+   "bookId": "23562048",
+   "title": "堂吉诃德（全2册）",
+   "author": "[西]塞万提斯",
+   "readingTime": 32771,
+   "notes": 20,
+   "finished": true
+  },
+  {
+   "bookId": "3300082886",
+   "title": "情书",
+   "author": "[日]芥川龙之介 [日]太宰治等",
+   "readingTime": 3078,
+   "notes": 5,
+   "finished": true
+  },
+  {
+   "bookId": "40740496",
+   "title": "素食者【2024诺贝尔文学奖得主】",
+   "author": "[韩]韩江",
+   "readingTime": 5227,
+   "notes": 5,
+   "finished": true
+  },
+  {
+   "bookId": "3300014121",
+   "title": "变态心理学",
+   "author": "[美]苏珊·诺伦-霍克西玛",
+   "readingTime": 2072,
+   "notes": 7,
+   "finished": false
+  },
+  {
+   "bookId": "855833",
+   "title": "娱乐至死",
+   "author": "尼尔·波兹曼",
+   "readingTime": 8939,
+   "notes": 49,
+   "finished": true
+  },
+  {
+   "bookId": "3300117073",
+   "title": "都是为了你好：教育中的不同角色",
+   "author": "解放日报原点栏目记者",
+   "readingTime": 4249,
+   "notes": 5,
+   "finished": true
+  },
+  {
+   "bookId": "3300117751",
+   "title": "小城与不确定性的墙（村上春树时隔6年最新长篇）",
+   "author": "[日]村上春树",
+   "readingTime": 17547,
+   "notes": 50,
+   "finished": true
+  },
+  {
+   "bookId": "24223847",
+   "title": "后来的事",
+   "author": "夏目漱石",
+   "readingTime": 8555,
+   "notes": 18,
+   "finished": true
+  },
+  {
+   "bookId": "674039",
+   "title": "推拿（茅盾文学奖获奖作品｜同名电影原著）",
+   "author": "毕飞宇",
+   "readingTime": 9947,
+   "notes": 11,
+   "finished": true
+  },
+  {
+   "bookId": "24918944",
+   "title": "如果我们的语言是威士忌",
+   "author": "[日]村上春树",
+   "readingTime": 923,
+   "notes": 3,
+   "finished": true
+  },
+  {
+   "bookId": "929173",
+   "title": "树犹如此",
+   "author": "白先勇",
+   "readingTime": 11715,
+   "notes": 11,
+   "finished": true
+  },
+  {
+   "bookId": "3300107894",
+   "title": "我胆小如鼠（看完从胆小怯懦变得松弛强大！）",
+   "author": "余华",
+   "readingTime": 4757,
+   "notes": 2,
+   "finished": true
+  },
+  {
+   "bookId": "CB_CWb2jd2kvFBC6r46pABozGgH",
+   "title": "妹妹人生 上",
+   "author": "入间人间",
+   "readingTime": 4169,
+   "notes": 4,
+   "finished": true
+  },
+  {
+   "bookId": "3300041002",
+   "title": "面纱（珍藏版）",
+   "author": "[英]W.毛姆·萨默塞特",
+   "readingTime": 7208,
+   "notes": 19,
+   "finished": true
+  },
+  {
+   "bookId": "674044",
+   "title": "我与地坛",
+   "author": "史铁生",
+   "readingTime": 8913,
+   "notes": 31,
+   "finished": true
+  },
+  {
+   "bookId": "3300069684",
+   "title": "读与被读",
+   "author": "刘文飞",
+   "readingTime": 7281,
+   "notes": 18,
+   "finished": true
+  },
+  {
+   "bookId": "29103034",
+   "title": "麦田里的守望者",
+   "author": "J.D.塞林格",
+   "readingTime": 6518,
+   "notes": 9,
+   "finished": true
+  },
+  {
+   "bookId": "33810356",
+   "title": "禅与摩托车维修艺术",
+   "author": "罗伯特·M.波西格",
+   "readingTime": 19045,
+   "notes": 52,
+   "finished": true
+  },
+  {
+   "bookId": "33617657",
+   "title": "平面国（果麦经典）",
+   "author": "埃德温·艾勃特",
+   "readingTime": 3826,
+   "notes": 10,
+   "finished": true
+  },
+  {
+   "bookId": "3300025964",
+   "title": "仙症",
+   "author": "郑执",
+   "readingTime": 9793,
+   "notes": 17,
+   "finished": true
+  },
+  {
+   "bookId": "842922",
+   "title": "少年维特之烦恼",
+   "author": "歌德",
+   "readingTime": 5890,
+   "notes": 18,
+   "finished": true
+  },
+  {
+   "bookId": "3300004348",
+   "title": "阿城文集之二：遍地风流",
+   "author": "阿城",
+   "readingTime": 8702,
+   "notes": 11,
+   "finished": true
+  },
+  {
+   "bookId": "24223845",
+   "title": "三四郎",
+   "author": "夏目漱石",
+   "readingTime": 9773,
+   "notes": 7,
+   "finished": true
+  },
+  {
+   "bookId": "937025",
+   "title": "假如真有时光机",
+   "author": "[日]村上春树",
+   "readingTime": 5536,
+   "notes": 7,
+   "finished": true
+  },
+  {
+   "bookId": "3300044710",
+   "title": "瓦尔登湖",
+   "author": "[美]亨利·戴维·梭罗",
+   "readingTime": 19026,
+   "notes": 27,
+   "finished": true
+  },
+  {
+   "bookId": "3300104638",
+   "title": "好的孤独",
+   "author": "陈果",
+   "readingTime": 4810,
+   "notes": 11,
+   "finished": true
+  },
+  {
+   "bookId": "3300102604",
+   "title": "隐身衣（茅奖得主格非作品）",
+   "author": "格非",
+   "readingTime": 2985,
+   "notes": 3,
+   "finished": true
+  },
+  {
+   "bookId": "3300049924",
+   "title": "猫咪会吃掉我的眼珠子吗？",
+   "author": "凯特琳·道蒂",
+   "readingTime": 2840,
+   "notes": 1,
+   "finished": true
+  },
+  {
+   "bookId": "827184",
+   "title": "解密（陈思诚导演，刘昊然主演电影同步上映中）",
+   "author": "麦家",
+   "readingTime": 7284,
+   "notes": 3,
+   "finished": true
+  },
+  {
+   "bookId": "932071",
+   "title": "黑桃皇后：普希金中短篇小说选（译文名著精选）",
+   "author": "亚历山大·普希金",
+   "readingTime": 9529,
+   "notes": 2,
+   "finished": true
+  },
+  {
+   "bookId": "3300065326",
+   "title": "逃避自由（弗洛姆作品系列）",
+   "author": "[美]艾里希·弗洛姆",
+   "readingTime": 15945,
+   "notes": 69,
+   "finished": true
+  },
+  {
+   "bookId": "857264",
+   "title": "大萝卜和难挑的鳄梨",
+   "author": "[日]村上春树",
+   "readingTime": 3867,
+   "notes": 1,
+   "finished": true
+  },
+  {
+   "bookId": "22604908",
+   "title": "爱吃沙拉的狮子",
+   "author": "[日]村上春树",
+   "readingTime": 2632,
+   "notes": 7,
+   "finished": true
+  },
+  {
+   "bookId": "3300103361",
+   "title": "食南之徒",
+   "author": "马伯庸",
+   "readingTime": 8235,
+   "notes": 3,
+   "finished": true
+  },
+  {
+   "bookId": "31808219",
+   "title": "卡拉马佐夫兄弟（套装上下册）（陀思妥耶夫斯基文集2015）",
+   "author": "陀思妥耶夫斯基",
+   "readingTime": 41219,
+   "notes": 35,
+   "finished": true
+  },
+  {
+   "bookId": "3300081969",
+   "title": "我还能看到多少次满月升起",
+   "author": "[日] 坂本龙一",
+   "readingTime": 7846,
+   "notes": 3,
+   "finished": true
+  },
+  {
+   "bookId": "855799",
+   "title": "当尼采哭泣",
+   "author": "[美]欧文·亚隆",
+   "readingTime": 17529,
+   "notes": 37,
+   "finished": true
+  },
+  {
+   "bookId": "23736455",
+   "title": "窄门（果麦经典）",
+   "author": "[法]纪德",
+   "readingTime": 5340,
+   "notes": 13,
+   "finished": true
+  },
+  {
+   "bookId": "3300012940",
+   "title": "法治的细节",
+   "author": "罗翔",
+   "readingTime": 9725,
+   "notes": 15,
+   "finished": true
+  },
+  {
+   "bookId": "3300090422",
+   "title": "羊男的圣诞节",
+   "author": "[日]村上春树  [日]佐佐木MAKI",
+   "readingTime": 555,
+   "notes": 1,
+   "finished": true
+  },
+  {
+   "bookId": "3300042999",
+   "title": "你的夏天还好吗？",
+   "author": "金爱烂",
+   "readingTime": 8545,
+   "notes": 12,
+   "finished": true
+  },
+  {
+   "bookId": "3300058807",
+   "title": "白色绵羊里的黑色绵羊",
+   "author": "双雪涛",
+   "readingTime": 11115,
+   "notes": 30,
+   "finished": true
+  },
+  {
+   "bookId": "932085",
+   "title": "雾都孤儿（译文名著精选）",
+   "author": "[英]狄更斯",
+   "readingTime": 13720,
+   "notes": 16,
+   "finished": true
+  },
+  {
+   "bookId": "3300100889",
+   "title": "如何找到想做的事",
+   "author": "[日]八木仁平",
+   "readingTime": 971,
+   "notes": 6,
+   "finished": true
+  },
+  {
+   "bookId": "40527660",
+   "title": "老人与海（译文经典）",
+   "author": "海明威",
+   "readingTime": 3056,
+   "notes": 6,
+   "finished": true
+  },
+  {
+   "bookId": "848660",
+   "title": "我的职业是小说家",
+   "author": "[日]村上春树",
+   "readingTime": 7954,
+   "notes": 36,
+   "finished": true
+  },
+  {
+   "bookId": "3300053438",
+   "title": "翦商：殷周之变与华夏新生",
+   "author": "李硕",
+   "readingTime": 16900,
+   "notes": 7,
+   "finished": true
+  },
+  {
+   "bookId": "33134725",
+   "title": "林少华看村上：从《挪威的森林》到《刺杀骑士团长》",
+   "author": "林少华",
+   "readingTime": 13362,
+   "notes": 36,
+   "finished": true
+  },
+  {
+   "bookId": "25561894",
+   "title": "猫头鹰在黄昏起飞",
+   "author": "[日]村上春树",
+   "readingTime": 11907,
+   "notes": 12,
+   "finished": true
+  },
+  {
+   "bookId": "853292",
+   "title": "当下的力量+当下的力量实践手册（白金版）（全集）",
+   "author": "埃克哈特·托利著 张德芬审校",
+   "readingTime": 15307,
+   "notes": 81,
+   "finished": true
+  },
+  {
+   "bookId": "3300085658",
+   "title": "痴人之爱",
+   "author": "[日]谷崎润一郎",
+   "readingTime": 5965,
+   "notes": 2,
+   "finished": true
+  },
+  {
+   "bookId": "37700235",
+   "title": "马可瓦尔多（卡尔维诺作品）",
+   "author": "伊塔洛·卡尔维诺",
+   "readingTime": 4584,
+   "notes": 5,
+   "finished": true
+  },
+  {
+   "bookId": "3300020163",
+   "title": "我的阿勒泰（中国版权金奖、“我的阿勒泰”同名电视剧）",
+   "author": "李娟",
+   "readingTime": 6204,
+   "notes": 8,
+   "finished": true
+  },
+  {
+   "bookId": "855327",
+   "title": "悉达多（果麦经典）",
+   "author": "[德]赫尔曼·黑塞",
+   "readingTime": 5815,
+   "notes": 24,
+   "finished": true
+  },
+  {
+   "bookId": "40401057",
+   "title": "呼兰河传（人文社·语文阅读推荐丛书）",
+   "author": "萧红",
+   "readingTime": 9489,
+   "notes": 20,
+   "finished": true
+  },
+  {
+   "bookId": "3300036962",
+   "title": "丧家狗：我读《论语》",
+   "author": "李零著",
+   "readingTime": 1052,
+   "notes": 1,
+   "finished": false
+  },
+  {
+   "bookId": "825681",
+   "title": "人性的枷锁（果麦经典）",
+   "author": "毛姆",
+   "readingTime": 31847,
+   "notes": 56,
+   "finished": true
+  },
+  {
+   "bookId": "37724851",
+   "title": "没有意义就没有摇摆",
+   "author": "[日]村上春树",
+   "readingTime": 6531,
+   "notes": 5,
+   "finished": true
+  },
+  {
+   "bookId": "841193",
+   "title": "边境·近境",
+   "author": "[日]村上春树",
+   "readingTime": 5996,
+   "notes": 17,
+   "finished": true
+  },
+  {
+   "bookId": "32206126",
+   "title": "房思琪的初恋乐园（精编版）",
+   "author": "林奕含",
+   "readingTime": 9302,
+   "notes": 35,
+   "finished": true
+  },
+  {
+   "bookId": "3300043000",
+   "title": "滔滔生活",
+   "author": "金爱烂",
+   "readingTime": 8942,
+   "notes": 42,
+   "finished": true
+  },
+  {
+   "bookId": "3300078163",
+   "title": "重要的“性”：给青年人的9堂性教育课",
+   "author": "[日]村濑幸浩",
+   "readingTime": 3977,
+   "notes": 9,
+   "finished": true
+  },
+  {
+   "bookId": "29348658",
+   "title": "史记的读法：司马迁的历史世界",
+   "author": "杨照",
+   "readingTime": 25898,
+   "notes": 24,
+   "finished": true
+  },
+  {
+   "bookId": "3300090423",
+   "title": "朗格汉岛的午后",
+   "author": "[日]村上春树  [日]安西水丸",
+   "readingTime": 1070,
+   "notes": 1,
+   "finished": true
+  },
+  {
+   "bookId": "927220",
+   "title": "心",
+   "author": "夏目漱石",
+   "readingTime": 8895,
+   "notes": 23,
+   "finished": true
+  },
+  {
+   "bookId": "25926862",
+   "title": "美丽新世界（译文经典）",
+   "author": "奥尔德斯·赫胥黎",
+   "readingTime": 15853,
+   "notes": 62,
+   "finished": true
+  },
+  {
+   "bookId": "3300020529",
+   "title": "恶意",
+   "author": "东野圭吾",
+   "readingTime": 4891,
+   "notes": 1,
+   "finished": true
+  },
+  {
+   "bookId": "3300042844",
+   "title": "村上T：我喜爱的T恤们",
+   "author": "[日]村上春树",
+   "readingTime": 2498,
+   "notes": 2,
+   "finished": true
+  },
+  {
+   "bookId": "3300061183",
+   "title": "六个说谎的大学生",
+   "author": "浅仓秋成",
+   "readingTime": 6375,
+   "notes": 1,
+   "finished": true
+  },
+  {
+   "bookId": "25424217",
+   "title": "地下",
+   "author": "[日]村上春树",
+   "readingTime": 19975,
+   "notes": 17,
+   "finished": true
+  },
+  {
+   "bookId": "22781912",
+   "title": "动物农场",
+   "author": "乔治·奥威尔",
+   "readingTime": 5067,
+   "notes": 11,
+   "finished": true
+  },
+  {
+   "bookId": "32219280",
+   "title": "长日将尽（译文经典）",
+   "author": "石黑一雄",
+   "readingTime": 12556,
+   "notes": 25,
+   "finished": true
+  },
+  {
+   "bookId": "3300075847",
+   "title": "日出国的工厂",
+   "author": "[日]村上春树",
+   "readingTime": 4046,
+   "notes": 3,
+   "finished": true
+  },
+  {
+   "bookId": "3300089507",
+   "title": "十八岁出门远行",
+   "author": "余华",
+   "readingTime": 9490,
+   "notes": 20,
+   "finished": true
+  },
+  {
+   "bookId": "31144011",
+   "title": "刀锋（毛姆长篇作品精选）",
+   "author": "毛姆",
+   "readingTime": 18552,
+   "notes": 38,
+   "finished": true
+  },
+  {
+   "bookId": "3300063647",
+   "title": "东京八平米",
+   "author": "吉井忍",
+   "readingTime": 6665,
+   "notes": 4,
+   "finished": true
+  },
+  {
+   "bookId": "3300085448",
+   "title": "坚如磐石（雷佳音、张国立、于和伟、周冬雨主演同名电影原著｜微信读书出品）",
+   "author": "陈宇",
+   "readingTime": 11032,
+   "notes": 1,
+   "finished": true
+  },
+  {
+   "bookId": "3300075849",
+   "title": "村上朝日堂是如何锻造的",
+   "author": "[日]村上春树 [日]安西水丸",
+   "readingTime": 6127,
+   "notes": 5,
+   "finished": true
+  },
+  {
+   "bookId": "43696891",
+   "title": "消失的真实",
+   "author": "金观涛",
+   "readingTime": 20532,
+   "notes": 41,
+   "finished": true
+  },
+  {
+   "bookId": "32847334",
+   "title": "村上朝日堂日记 旋涡猫的找法",
+   "author": "[日]村上春树",
+   "readingTime": 4174,
+   "notes": 7,
+   "finished": true
+  },
+  {
+   "bookId": "CB_6VkER6EQGEMw6mE6l53eu8iR",
+   "title": "《在暴雪时分》",
+   "author": "",
+   "readingTime": 14780,
+   "notes": 1,
+   "finished": true
+  },
+  {
+   "bookId": "3300075848",
+   "title": "村上朝日堂 嗨嗬！",
+   "author": "[日]村上春树",
+   "readingTime": 4669,
+   "notes": 22,
+   "finished": true
+  },
+  {
+   "bookId": "43148283",
+   "title": "潮骚",
+   "author": "三岛由纪夫",
+   "readingTime": 3415,
+   "notes": 1,
+   "finished": true
+  },
+  {
+   "bookId": "3300084608",
+   "title": "辋川烟云——王维传",
+   "author": "哲夫",
+   "readingTime": 19724,
+   "notes": 4,
+   "finished": true
+  },
+  {
+   "bookId": "3300075846",
+   "title": "村上朝日堂的卷土重来",
+   "author": "[日]村上春树 [日]安西水丸",
+   "readingTime": 5059,
+   "notes": 9,
+   "finished": true
+  },
+  {
+   "bookId": "43896728",
+   "title": "不能承受的生命之轻（米兰·昆德拉作品系列·2022版）",
+   "author": "[法]米兰·昆德拉",
+   "readingTime": 12193,
+   "notes": 11,
+   "finished": true
+  },
+  {
+   "bookId": "3300081878",
+   "title": "读梦：村上春树长篇小说指南（微信读书出品）",
+   "author": "彭智烨",
+   "readingTime": 4934,
+   "notes": 1,
+   "finished": true
+  },
+  {
+   "bookId": "CB_67e3j03h59IQ6lW6l55D49QQ",
+   "title": "《她病得不轻》",
+   "author": "",
+   "readingTime": 8224,
+   "notes": 1,
+   "finished": true
+  },
+  {
+   "bookId": "3300080867",
+   "title": "法律的悖论",
+   "author": "罗翔",
+   "readingTime": 13298,
+   "notes": 54,
+   "finished": true
+  },
+  {
+   "bookId": "34357450",
+   "title": "变形记",
+   "author": "卡夫卡",
+   "readingTime": 1934,
+   "notes": 1,
+   "finished": true
+  },
+  {
+   "bookId": "3300072295",
+   "title": "太白金星有点烦",
+   "author": "马伯庸",
+   "readingTime": 7918,
+   "notes": 2,
+   "finished": true
+  },
+  {
+   "bookId": "3300055149",
+   "title": "我在北京送快递",
+   "author": "胡安焉",
+   "readingTime": 7541,
+   "notes": 25,
+   "finished": true
+  },
+  {
+   "bookId": "26435427",
+   "title": "生死疲劳【中国诺奖得主代表作】",
+   "author": "莫言",
+   "readingTime": 19893,
+   "notes": 14,
+   "finished": true
+  },
+  {
+   "bookId": "33091722",
+   "title": "如何保护你的孩子远离网络色情：美国青少年性教育第一书",
+   "author": "克里斯汀·A.詹森 盖尔·A.波伊纳",
+   "readingTime": 466,
+   "notes": 4,
+   "finished": true
+  },
+  {
+   "bookId": "216212",
+   "title": "小王子",
+   "author": "[法]安托万·德·圣埃克苏佩里著",
+   "readingTime": 3085,
+   "notes": 45,
+   "finished": true
+  },
+  {
+   "bookId": "3300058701",
+   "title": "胡思乱想消除指南：用认知行为策略走出情绪困境",
+   "author": "萨拉·埃德尔曼",
+   "readingTime": 16816,
+   "notes": 118,
+   "finished": true
+  },
+  {
+   "bookId": "3300079930",
+   "title": "恶心",
+   "author": "[法]让-保尔·萨特",
+   "readingTime": 11825,
+   "notes": 55,
+   "finished": true
+  },
+  {
+   "bookId": "37724849",
+   "title": "村上广播",
+   "author": "[日]村上春树",
+   "readingTime": 3300,
+   "notes": 8,
+   "finished": true
+  },
+  {
+   "bookId": "CB_4n05Fu5C64cG6kO6l51qGEVK",
+   "title": "苍与咲良 01",
+   "author": "伊尾微",
+   "readingTime": 6154,
+   "notes": 2,
+   "finished": true
+  },
+  {
+   "bookId": "3300076730",
+   "title": "村上朝日堂",
+   "author": "[日]村上春树 [日]安西水丸",
+   "readingTime": 4836,
+   "notes": 23,
+   "finished": true
+  },
+  {
+   "bookId": "3300003116",
+   "title": "第一人称单数",
+   "author": "[日]村上春树",
+   "readingTime": 5469,
+   "notes": 37,
+   "finished": true
+  },
+  {
+   "bookId": "3300072774",
+   "title": "在昨日的春天等待你",
+   "author": "[日]八目迷 [日]KUKKA",
+   "readingTime": 5280,
+   "notes": 2,
+   "finished": true
+  },
+  {
+   "bookId": "907261",
+   "title": "没有女人的男人们（《驾驶我的车》原著，第94届奥斯卡最佳国际影片）",
+   "author": "[日]村上春树",
+   "readingTime": 12632,
+   "notes": 74,
+   "finished": true
+  },
+  {
+   "bookId": "3300075248",
+   "title": "存在主义心理治疗",
+   "author": "[美]亚隆",
+   "readingTime": 48851,
+   "notes": 160,
+   "finished": true
+  },
+  {
+   "bookId": "25926896",
+   "title": "东京奇谭集",
+   "author": "[日]村上春树",
+   "readingTime": 6678,
+   "notes": 40,
+   "finished": true
+  },
+  {
+   "bookId": "40527664",
+   "title": "情人（译文40）",
+   "author": "[法]杜拉斯",
+   "readingTime": 7883,
+   "notes": 28,
+   "finished": true
+  },
+  {
+   "bookId": "23523099",
+   "title": "现实一种（轻经典）",
+   "author": "余华",
+   "readingTime": 6055,
+   "notes": 17,
+   "finished": true
+  },
+  {
+   "bookId": "912825",
+   "title": "沉默的大多数",
+   "author": "王小波",
+   "readingTime": 10960,
+   "notes": 35,
+   "finished": true
+  },
+  {
+   "bookId": "3300010685",
+   "title": "一地鸡毛（典藏版）",
+   "author": "刘震云",
+   "readingTime": 13283,
+   "notes": 25,
+   "finished": true
+  },
+  {
+   "bookId": "3300069510",
+   "title": "睡美人  湖（川端康成精选集）",
+   "author": "川端康成",
+   "readingTime": 5866,
+   "notes": 18,
+   "finished": true
+  },
+  {
+   "bookId": "907263",
+   "title": "神的孩子全跳舞",
+   "author": "[日]村上春树",
+   "readingTime": 5764,
+   "notes": 42,
+   "finished": true
+  },
+  {
+   "bookId": "3300062433",
+   "title": "湖",
+   "author": "川端康成",
+   "readingTime": 5842,
+   "notes": 16,
+   "finished": true
+  },
+  {
+   "bookId": "35239338",
+   "title": "安娜·卡列尼娜（全集）",
+   "author": "列夫·托尔斯泰",
+   "readingTime": 46965,
+   "notes": 50,
+   "finished": true
+  },
+  {
+   "bookId": "27247670",
+   "title": "强风吹拂（2023版｜同名动画原著）",
+   "author": "三浦紫苑",
+   "readingTime": 12421,
+   "notes": 12,
+   "finished": true
+  },
+  {
+   "bookId": "41611853",
+   "title": "列克星敦的幽灵",
+   "author": "[日]村上春树",
+   "readingTime": 5191,
+   "notes": 22,
+   "finished": true
+  },
+  {
+   "bookId": "3300013610",
+   "title": "哲学家们都干了些什么？ （修订版）",
+   "author": "林欣浩",
+   "readingTime": 17687,
+   "notes": 28,
+   "finished": true
+  },
+  {
+   "bookId": "3300029331",
+   "title": "漫长的余生",
+   "author": "罗新",
+   "readingTime": 16807,
+   "notes": 4,
+   "finished": true
+  },
+  {
+   "bookId": "41611857",
+   "title": "电视人",
+   "author": "[日]村上春树",
+   "readingTime": 5976,
+   "notes": 35,
+   "finished": true
+  },
+  {
+   "bookId": "41611864",
+   "title": "再袭面包店",
+   "author": "[日]村上春树",
+   "readingTime": 5626,
+   "notes": 24,
+   "finished": true
+  },
+  {
+   "bookId": "41577527",
+   "title": "致我深爱的每个你",
+   "author": "乙野四方字",
+   "readingTime": 3092,
+   "notes": 4,
+   "finished": true
+  },
+  {
+   "bookId": "41577529",
+   "title": "致深爱你的那个我",
+   "author": "乙野四方字",
+   "readingTime": 3660,
+   "notes": 2,
+   "finished": true
+  },
+  {
+   "bookId": "33638775",
+   "title": "苏东坡新传",
+   "author": "李一冰",
+   "readingTime": 58731,
+   "notes": 6,
+   "finished": true
+  },
+  {
+   "bookId": "26846981",
+   "title": "月牙儿（老舍小说精选集）",
+   "author": "老舍",
+   "readingTime": 12730,
+   "notes": 12,
+   "finished": true
+  },
+  {
+   "bookId": "3300060202",
+   "title": "金榜题名之后：大学生出路分化之谜",
+   "author": "郑雅君",
+   "readingTime": 10925,
+   "notes": 21,
+   "finished": true
+  },
+  {
+   "bookId": "38395155",
+   "title": "局外人",
+   "author": "[法]阿尔贝·加缪",
+   "readingTime": 8909,
+   "notes": 19,
+   "finished": true
+  },
+  {
+   "bookId": "41611868",
+   "title": "旋转木马鏖战记",
+   "author": "[日]村上春树",
+   "readingTime": 4482,
+   "notes": 40,
+   "finished": true
+  },
+  {
+   "bookId": "41611866",
+   "title": "萤",
+   "author": "[日]村上春树",
+   "readingTime": 3863,
+   "notes": 17,
+   "finished": true
+  },
+  {
+   "bookId": "3300003224",
+   "title": "长安的荔枝（同名影视原著）",
+   "author": "马伯庸",
+   "readingTime": 4018,
+   "notes": 7,
+   "finished": true
+  },
+  {
+   "bookId": "33820355",
+   "title": "乡土中国",
+   "author": "费孝通",
+   "readingTime": 5498,
+   "notes": 25,
+   "finished": true
+  },
+  {
+   "bookId": "728774",
+   "title": "第七天",
+   "author": "余华",
+   "readingTime": 4991,
+   "notes": 8,
+   "finished": true
+  },
+  {
+   "bookId": "41611861",
+   "title": "遇到百分之百的女孩",
+   "author": "[日]村上春树",
+   "readingTime": 4093,
+   "notes": 10,
+   "finished": true
+  },
+  {
+   "bookId": "36536484",
+   "title": "金阁寺（青鸟文库）",
+   "author": "三岛由纪夫",
+   "readingTime": 8422,
+   "notes": 28,
+   "finished": true
+  },
+  {
+   "bookId": "41611859",
+   "title": "去中国的小船",
+   "author": "[日]村上春树",
+   "readingTime": 4662,
+   "notes": 15,
+   "finished": true
+  },
+  {
+   "bookId": "30766469",
+   "title": "爱你就像爱生命",
+   "author": "王小波",
+   "readingTime": 4577,
+   "notes": 12,
+   "finished": true
+  },
+  {
+   "bookId": "609288",
+   "title": "菊与刀",
+   "author": "本尼迪克特",
+   "readingTime": 12679,
+   "notes": 14,
+   "finished": true
+  },
+  {
+   "bookId": "34054444",
+   "title": "三日间的幸福",
+   "author": "三秋缒",
+   "readingTime": 4541,
+   "notes": 5,
+   "finished": true
+  },
+  {
+   "bookId": "3300061197",
+   "title": "刺杀骑士团长（2023修订版）",
+   "author": "[日]村上春树",
+   "readingTime": 0,
+   "notes": 1,
+   "finished": false
+  },
+  {
+   "bookId": "30599281",
+   "title": "没有色彩的多崎作和他的巡礼之年",
+   "author": "[日]村上春树",
+   "readingTime": 9159,
+   "notes": 50,
+   "finished": true
+  },
+  {
+   "bookId": "25561846",
+   "title": "一九八四（译文经典）",
+   "author": "乔治·奥威尔",
+   "readingTime": 13394,
+   "notes": 60,
+   "finished": true
+  },
+  {
+   "bookId": "3300019555",
+   "title": "索福克勒斯悲剧集2：俄狄浦斯王",
+   "author": "[古希腊]索福克勒斯",
+   "readingTime": 2215,
+   "notes": 1,
+   "finished": true
+  },
+  {
+   "bookId": "3300035142",
+   "title": "1Q84",
+   "author": "[日]村上春树",
+   "readingTime": 36153,
+   "notes": 94,
+   "finished": true
+  },
+  {
+   "bookId": "853426",
+   "title": "稀缺：我们是如何陷入贫穷与忙碌的",
+   "author": "塞德希尔·穆来纳森",
+   "readingTime": 12910,
+   "notes": 14,
+   "finished": true
+  },
+  {
+   "bookId": "40504334",
+   "title": "东京贫困女子（同名日剧原著）",
+   "author": "[日]中村淳彦",
+   "readingTime": 8501,
+   "notes": 9,
+   "finished": true
+  },
+  {
+   "bookId": "3300036395",
+   "title": "天黑以后",
+   "author": "[日]村上春树",
+   "readingTime": 4649,
+   "notes": 18,
+   "finished": true
+  },
+  {
+   "bookId": "857863",
+   "title": "献给阿尔吉侬的花束",
+   "author": "丹尼尔·凯斯",
+   "readingTime": 11143,
+   "notes": 36,
+   "finished": true
+  },
+  {
+   "bookId": "27689995",
+   "title": "查拉图斯特拉如是说（果麦经典）",
+   "author": "尼采",
+   "readingTime": 7169,
+   "notes": 2,
+   "finished": false
+  },
+  {
+   "bookId": "24918942",
+   "title": "海边的卡夫卡",
+   "author": "[日]村上春树",
+   "readingTime": 17310,
+   "notes": 86,
+   "finished": true
+  },
+  {
+   "bookId": "25856509",
+   "title": "斯普特尼克恋人",
+   "author": "[日]村上春树",
+   "readingTime": 8384,
+   "notes": 47,
+   "finished": true
+  },
+  {
+   "bookId": "43028702",
+   "title": "中国文化课",
+   "author": "余秋雨",
+   "readingTime": 16078,
+   "notes": 15,
+   "finished": true
+  },
+  {
+   "bookId": "25856513",
+   "title": "奇鸟行状录",
+   "author": "[日]村上春树",
+   "readingTime": 30955,
+   "notes": 160,
+   "finished": true
+  },
+  {
+   "bookId": "24953415",
+   "title": "树上的男爵",
+   "author": "伊塔洛·卡尔维诺",
+   "readingTime": 8193,
+   "notes": 10,
+   "finished": true
+  },
+  {
+   "bookId": "3300037615",
+   "title": "冰菓漫画9-10",
+   "author": "TASKOHNA 米泽穗信 西屋大志",
+   "readingTime": 2829,
+   "notes": 1,
+   "finished": true
+  },
+  {
+   "bookId": "3300037617",
+   "title": "冰菓漫画7-8",
+   "author": "TASKOHNA 米泽穗信 西屋大志",
+   "readingTime": 2182,
+   "notes": 1,
+   "finished": true
+  },
+  {
+   "bookId": "3300037624",
+   "title": "冰菓漫画5-6",
+   "author": "TASKOHNA 米泽穗信 西屋大志",
+   "readingTime": 2089,
+   "notes": 1,
+   "finished": true
+  },
+  {
+   "bookId": "25856511",
+   "title": "国境以南 太阳以西",
+   "author": "[日]村上春树",
+   "readingTime": 6775,
+   "notes": 44,
+   "finished": true
+  },
+  {
+   "bookId": "3300061198",
+   "title": "世界尽头与冷酷仙境（2023修订版）",
+   "author": "[日]村上春树",
+   "readingTime": 0,
+   "notes": 1,
+   "finished": false
+  },
+  {
+   "bookId": "25856507",
+   "title": "世界尽头与冷酷仙境",
+   "author": "[日]村上春树",
+   "readingTime": 16622,
+   "notes": 49,
+   "finished": true
+  },
+  {
+   "bookId": "22355153",
+   "title": "倾城之恋",
+   "author": "张爱玲",
+   "readingTime": 3285,
+   "notes": 6,
+   "finished": false
+  },
+  {
+   "bookId": "3300043937",
+   "title": "通往夏天的隧道，再见的出口",
+   "author": "[日]八目迷 [日]KUKKA",
+   "readingTime": 4680,
+   "notes": 8,
+   "finished": true
+  },
+  {
+   "bookId": "3300024174",
+   "title": "千只鹤",
+   "author": "川端康成",
+   "readingTime": 2700,
+   "notes": 2,
+   "finished": true
+  },
+  {
+   "bookId": "3300025231",
+   "title": "雪国（2022新译版）",
+   "author": "川端康成",
+   "readingTime": 10638,
+   "notes": 22,
+   "finished": true
+  },
+  {
+   "bookId": "3300042951",
+   "title": "一个女人的故事：全新修订版",
+   "author": "[法]安妮·埃尔诺",
+   "readingTime": 1831,
+   "notes": 10,
+   "finished": true
+  },
+  {
+   "bookId": "27211035",
+   "title": "窗边的小豆豆",
+   "author": "黑柳彻子",
+   "readingTime": 6148,
+   "notes": 20,
+   "finished": true
+  },
+  {
+   "bookId": "924389",
+   "title": "失明症漫记（罗翔推荐）",
+   "author": "若泽·萨拉马戈",
+   "readingTime": 10600,
+   "notes": 12,
+   "finished": true
+  },
+  {
+   "bookId": "43219484",
+   "title": "叔本华的治疗",
+   "author": "[美]欧文·D.亚隆",
+   "readingTime": 0,
+   "notes": 0,
+   "finished": false
+  },
+  {
+   "bookId": "912316",
+   "title": "爱的进化论",
+   "author": "阿兰·德波顿",
+   "readingTime": 1,
+   "notes": 0,
+   "finished": false
+  },
+  {
+   "bookId": "3300138316",
+   "title": "父亲的解放日志（豆瓣2025年度外国文学TOP1）",
+   "author": "[韩]郑智我",
+   "readingTime": 0,
+   "notes": 0,
+   "finished": false
+  },
+  {
+   "bookId": "3300151432",
+   "title": "人生解忧：佛学入门四十讲",
+   "author": "成庆",
+   "readingTime": 7,
+   "notes": 0,
+   "finished": false
+  },
+  {
+   "bookId": "3300146311",
+   "title": "牵小狗的女人（轻经典）",
+   "author": "[俄]契诃夫",
+   "readingTime": 3,
+   "notes": 0,
+   "finished": false
+  },
+  {
+   "bookId": "23796324",
+   "title": "昨日的世界",
+   "author": "茨威格",
+   "readingTime": 10,
+   "notes": 0,
+   "finished": false
+  },
+  {
+   "bookId": "3300003472",
+   "title": "鹿鸣馆",
+   "author": "三岛由纪夫",
+   "readingTime": 0,
+   "notes": 0,
+   "finished": false
+  },
+  {
+   "bookId": "3300143879",
+   "title": "芭芭雅嘎下了个蛋",
+   "author": "[荷]杜布拉夫卡·乌格雷西奇",
+   "readingTime": 0,
+   "notes": 0,
+   "finished": false
+  },
+  {
+   "bookId": "36069754",
+   "title": "太阳与铁（果麦经典）",
+   "author": "三岛由纪夫",
+   "readingTime": 0,
+   "notes": 0,
+   "finished": false
+  },
+  {
+   "bookId": "3300003478",
+   "title": "长刀之夜",
+   "author": "三岛由纪夫",
+   "readingTime": 6,
+   "notes": 0,
+   "finished": false
+  },
+  {
+   "bookId": "3300020524",
+   "title": "撒哈拉的故事",
+   "author": "三毛",
+   "readingTime": 0,
+   "notes": 0,
+   "finished": false
+  },
+  {
+   "bookId": "3300058561",
+   "title": "老派少女购物路线",
+   "author": "洪爱珠",
+   "readingTime": 0,
+   "notes": 0,
+   "finished": false
+  },
+  {
+   "bookId": "45442056",
+   "title": "不朽：米兰·昆德拉作品系列（2022版）",
+   "author": "[法]米兰·昆德拉",
+   "readingTime": 0,
+   "notes": 0,
+   "finished": false
+  },
+  {
+   "bookId": "3300204687",
+   "title": "第一哲学沉思集（精译精注版）",
+   "author": "[法]勒内·笛卡尔",
+   "readingTime": 0,
+   "notes": 0,
+   "finished": false
+  },
+  {
+   "bookId": "3300172386",
+   "title": "小说榫卯",
+   "author": "张秋子",
+   "readingTime": 0,
+   "notes": 0,
+   "finished": false
+  },
+  {
+   "bookId": "36557865",
+   "title": "爱的艺术",
+   "author": "[美]艾里希·弗洛姆",
+   "readingTime": 0,
+   "notes": 0,
+   "finished": false
+  },
+  {
+   "bookId": "35652952",
+   "title": "青色时代（三岛由纪夫作品系列）",
+   "author": "三岛由纪夫",
+   "readingTime": 0,
+   "notes": 0,
+   "finished": false
+  },
+  {
+   "bookId": "3300046771",
+   "title": "柠檬（果麦经典）",
+   "author": "梶井基次郎",
+   "readingTime": 0,
+   "notes": 0,
+   "finished": false
+  },
+  {
+   "bookId": "914291",
+   "title": "昨天的云：回忆录四部曲之一",
+   "author": "王鼎钧",
+   "readingTime": 2,
+   "notes": 0,
+   "finished": false
+  },
+  {
+   "bookId": "3300017658",
+   "title": "川端康成传：双面之人",
+   "author": "小谷野敦",
+   "readingTime": 0,
+   "notes": 0,
+   "finished": false
+  },
+  {
+   "bookId": "40726710",
+   "title": "也许你该找个人聊聊",
+   "author": "洛莉·戈特利布",
+   "readingTime": 0,
+   "notes": 0,
+   "finished": false
+  },
+  {
+   "bookId": "3300213232",
+   "title": "其中一个是谎言",
+   "author": "[韩]金爱烂",
+   "readingTime": 0,
+   "notes": 0,
+   "finished": false
+  },
+  {
+   "bookId": "30961498",
+   "title": "自我与本我（果麦经典）",
+   "author": "西格蒙德·弗洛伊德",
+   "readingTime": 0,
+   "notes": 0,
+   "finished": false
+  },
+  {
+   "bookId": "234421",
+   "title": "中信国学大典·庄子",
+   "author": "陈鼓应 蒋丽梅",
+   "readingTime": 0,
+   "notes": 0,
+   "finished": false
+  },
+  {
+   "bookId": "3300046783",
+   "title": "精神与爱欲（果麦经典）",
+   "author": "[德]赫尔曼·黑塞",
+   "readingTime": 0,
+   "notes": 0,
+   "finished": false
+  },
+  {
+   "bookId": "3300197018",
+   "title": "贪婪的多巴胺2",
+   "author": "[美]迈克尔·E. 朗",
+   "readingTime": 2,
+   "notes": 0,
+   "finished": false
+  },
+  {
+   "bookId": "24217472",
+   "title": "蝶变：澳门博彩业田野叙事",
+   "author": "刘昭瑞 霍志钊",
+   "readingTime": 0,
+   "notes": 0,
+   "finished": false
+  },
+  {
+   "bookId": "3300161056",
+   "title": "毛选的底层逻辑：看透本质的思维框架",
+   "author": "周鸿仙",
+   "readingTime": 0,
+   "notes": 0,
+   "finished": false
+  },
+  {
+   "bookId": "3300087424",
+   "title": "倾听村上春树",
+   "author": "[美]杰伊·鲁宾",
+   "readingTime": 2,
+   "notes": 0,
+   "finished": false
+  },
+  {
+   "bookId": "32282924",
+   "title": "恋人絮语",
+   "author": "[法]罗兰·巴特",
+   "readingTime": 0,
+   "notes": 0,
+   "finished": false
+  },
+  {
+   "bookId": "3300143875",
+   "title": "九诗心：暗夜里的文学启明",
+   "author": "黄晓丹",
+   "readingTime": 0,
+   "notes": 0,
+   "finished": false
+  },
+  {
+   "bookId": "3300124474",
+   "title": "理性的疯狂梦",
+   "author": "[智利]本哈明·拉巴图特",
+   "readingTime": 0,
+   "notes": 0,
+   "finished": false
+  },
+  {
+   "bookId": "36721731",
+   "title": "文学批评入门",
+   "author": "汤拥华",
+   "readingTime": 0,
+   "notes": 0,
+   "finished": false
+  },
+  {
+   "bookId": "35652970",
+   "title": "沉潜的瀑布（三岛由纪夫作品系列）",
+   "author": "三岛由纪夫",
+   "readingTime": 0,
+   "notes": 0,
+   "finished": false
+  },
+  {
+   "bookId": "3300197339",
+   "title": "罪与罚",
+   "author": "[俄]陀思妥耶夫斯基",
+   "readingTime": 0,
+   "notes": 0,
+   "finished": false
+  }
+ ]
+}

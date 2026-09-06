@@ -1,14 +1,13 @@
 # -*- coding: utf-8 -*-
-"""为 demo 仓库生成 graph_data.js（图谱模式数据）。
+"""生成 graph_data.js（图谱模式数据）。
 
-完整版管线可从「书 + 逐书笔记/关联」构建更丰富的图谱（含书间关联、概念节点）；
-demo 仓库没有这类笔记数据，这个脚本从 books.json + theme_tags.json 直接生成简化图谱：
+图谱从「书 + 主题标签」直接生成：
 - 每本书 = book 节点
 - 每本书连到它的主题标签（theme 节点）
-- 无 concept/外部书目节点（那些来自逐书关联记录）
-足够让 index.html 的图谱模式（?poster / 默认视图）可运行并展示书-主题网络。
+数据来自仓库内 data/（books.json + theme_tags.json），默认是作者的真实脱敏数据；
+换成你自己的数据后重跑即可得到你的图谱。
 
-用法：python pipeline/make_demo_graph.py
+用法：python pipeline/make_graph.py
 """
 import json
 from pathlib import Path

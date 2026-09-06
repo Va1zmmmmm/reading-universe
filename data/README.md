@@ -1,62 +1,25 @@
 # data/ 说明
 
-`data/` 是**输入目录**：放着构建星图所需的三种数据。仓库不提交数据文件（见根 `.gitignore`），
-clone 后先跑 `python pipeline/make_demo_data.py` 生成 54 本公共领域经典的示例数据，
-再 `python pipeline/build_universe.py` 构建。
+`data/` 是**输入目录**：放着构建星图所需的三种数据（books.json / theme_tags.json / themes/*.md）。
+clone 后无需任何操作即可看效果——仓库自带**作者真实脱敏数据**已跑好构建（见 `web/`）。
 
-## 三种输入格式
+## 本仓库自带的真实脱敏数据
 
-### 1. books.json —— 书元数据
+| 文件 | 内容 | 规模 |
+|---|---|---|
+| `books.json` | 作者真实读过的书（脱敏） | 336 本 |
+| `theme_tags.json` | 每本书的主题标签 | 333 本（268 本有标） |
+| `themes/*.md` | 39 个主题专题卡（去金句/日期） | 39 张 |
+| `theme_wordlist.md` | 39 词表（打标口径） | 39 标签 |
 
-```json
-{
-  "syncedAt": "2026-01-01",
-  "books": [
-    {
-      "bookId": "7000000",
-      "title": "局外人",
-      "author": "阿尔贝·加缪",
-      "readingTime": 36000,        // 阅读秒数 → 恒星半径
-      "finishTime": 1700000000,    // Unix 秒（可选；不填则书不进"已读完"布局）
-      "notes": { "total": 40 },    // 笔记数 → 恒星亮度
-      "affectionScore": 8.0,       // 喜爱度分（可选）
-      "affectionLevel": "喜爱"     // 一般/不错/喜爱/极爱（可选）
-    }
-  ]
-}
-```
+**脱敏说明**：这些是作者真实阅读数据，但只含聚合字段（书名/作者/主题标签/阅读时长/笔记数），
+**不含**划线原文、逐书读完日期、评分、书评。想公开你的版本，也请保持这个边界。
 
-`readingTime` 与 `notes.total` 是唯一真正参与布局的字段（星越大越亮）；其余可省略。
+## 换用自己的数据
 
-### 2. theme_tags.json —— 书 → 主题标签
+1. `python pipeline/sync_from_weread.py <你的weread数据目录>` → 覆盖 `books.json`
+2. `python pipeline/tag_books.py` → 生成你自己的 `theme_tags.json`（AI 打标需 `LLM_API_KEY`）
+3. `python pipeline/make_theme_cards.py` → 生成主题卡
+4. `python pipeline/build_universe.py && python pipeline/make_graph.py` → 重构建
 
-```json
-{
-  "7000000": { "title": "局外人", "tags": ["存在主义", "荒诞", "死亡"] }
-}
-```
-
-每本书 1~5 个标签，标签决定它属于哪些星系。标签词可以完全自定义（不受固定词表限制）。
-
-### 3. themes/*.md —— 主题专题卡（可选）
-
-每个主题一个 `.md`（文件名 = 主题名），点星系时弹卡展示。示例结构：
-
-```markdown
-# 主题卡：存在主义
-
-- 书目：12 本
-  - 《局外人》
-  - 《西西弗神话》
-
-- 主题轨迹：这个主题在你阅读史里怎么演变——哪本书最先提出、哪些书推进/翻转、最终落在哪。
-
-- 交界：
-  - 孤独：与本主题共享同一批书的相邻主题。
-```
-
-## 隐私
-
-`data/` 是唯一放"你自己的真实书单"的地方。**公开部署前请自行检查**：书名本身不算隐私，
-但如果你不想暴露完整书单/阅读时长，可以把 `readingTime`/`finishTime` 留空或做聚合。
-本仓库的示例数据由 `make_demo_data.py` 随机合成，无任何真实阅读记录，可放心公开。
+详见根 `README.md` 和 `docs/DATA_FORMAT.md`。
