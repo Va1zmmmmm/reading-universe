@@ -1,0 +1,16 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# 本地真实数据——绝不上传（公开仓库只放合成的 demo 数据）
+data/books.json
+data/theme_tags.json
+data/themes/
+
+# 编辑器 / 系统
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
