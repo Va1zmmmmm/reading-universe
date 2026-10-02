@@ -53,11 +53,18 @@ def llm_tag(title: str, author: str, highlights: str, wordlist: str, api_key: st
             {"role": "user", "content": user},
         ],
         "temperature": 0.2,
-        "max_tokens": 200,
+        # ⚠️ 2026-09-30 修：原为 200 —— 对**会思考的模型**（DeepSeek V4 系默认开思考）会被
+        #    reasoning 吃光，`message.content` 回空串 ⇒ 下面正则找不到 `[...]` ⇒ **静默返回 []**，
+        #    表现为「跑完了但一本都没打上标」，极难察觉。给足预算（2026-09-30 实测 4000 够）。
+        "max_tokens": 4000,
     }).encode()
+    # ⚠️ 2026-09-30 修：原 headers 只有 Content-Type + Authorization。
+    #    少了 `User-Agent` 时，部分网关（Cloudflare 前置）会直接 **403 / 1010** ——
+    #    表现为「一本都打不了、全是 403」，很容易被误判成 key 失效或网络问题。
     req = urllib.request.Request(endpoint, data=body, headers={
         "Content-Type": "application/json",
         "Authorization": "Bearer " + api_key,
+        "User-Agent": "reading-universe/pipeline (+https://github.com/Va1zmmmmm/reading-universe)",
     })
     try:
         resp = json.loads(urllib.request.urlopen(req, timeout=60).read().decode())

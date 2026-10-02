@@ -25,6 +25,10 @@ python pipeline/sync_from_weread.py <你的weread-skill数据目录>
 # 2.（用自己的书才需要）给书打主题标签（39 词表，AI 打或手动）
 export LLM_API_KEY=你的DeepSeek或OpenAI兼容key
 python pipeline/tag_books.py          # AI 打标；或 --manual 手动填表
+#    ⚠️ 若一本都没打上（日志全是 `LLM 失败` 或干脆没有输出），先查这两条 —— 2026-09-30 已修：
+#      · **403 / Cloudflare 1010** → 请求缺 `User-Agent`（旧版没带；现已带，自建网关时也请确保保留）
+#      · **跑完但全部无标签** → `max_tokens` 太小，被模型的思考过程吃光，正文回空串、脚本静默返回 []
+#        （旧版写死 200；现已提到 4000。**换模型后如果它更"能想"，这个值可能还要加**）
 
 # 3.（可选）生成主题卡（点星系弹的轨迹卡）
 python pipeline/make_theme_cards.py   # 骨架；--llm 让 AI 写轨迹

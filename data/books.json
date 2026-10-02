@@ -1,15 +1,47 @@
 {
- "syncedAt": "2026-09-06T15:00:33.109Z",
+ "syncedAt": "2026-09-29T15:00:25.509Z",
  "totalBooks": 336,
  "note": "脱敏版：去掉逐书读完日期/评分/书评/封面，保留书名作者阅读时长笔记数（聚合可视化所需）。",
  "books": [
   {
+   "bookId": "3300138316",
+   "title": "父亲的解放日志（豆瓣2025年度外国文学TOP1）",
+   "author": "[韩]郑智我",
+   "readingTime": 2858,
+   "notes": 10,
+   "finished": false
+  },
+  {
+   "bookId": "3300213232",
+   "title": "其中一个是谎言",
+   "author": "[韩]金爱烂",
+   "readingTime": 7016,
+   "notes": 29,
+   "finished": true
+  },
+  {
+   "bookId": "36557865",
+   "title": "爱的艺术",
+   "author": "[美]艾里希·弗洛姆",
+   "readingTime": 14226,
+   "notes": 142,
+   "finished": true
+  },
+  {
+   "bookId": "3300020524",
+   "title": "撒哈拉的故事",
+   "author": "三毛",
+   "readingTime": 13059,
+   "notes": 15,
+   "finished": true
+  },
+  {
    "bookId": "36212379",
    "title": "镜子之家（三岛由纪夫作品系列）",
    "author": "三岛由纪夫",
-   "readingTime": 9353,
-   "notes": 57,
-   "finished": false
+   "readingTime": 46171,
+   "notes": 264,
+   "finished": true
   },
   {
    "bookId": "3300139094",
@@ -2428,14 +2460,6 @@
    "finished": false
   },
   {
-   "bookId": "3300138316",
-   "title": "父亲的解放日志（豆瓣2025年度外国文学TOP1）",
-   "author": "[韩]郑智我",
-   "readingTime": 0,
-   "notes": 0,
-   "finished": false
-  },
-  {
    "bookId": "3300151432",
    "title": "人生解忧：佛学入门四十讲",
    "author": "成庆",
@@ -2492,14 +2516,6 @@
    "finished": false
   },
   {
-   "bookId": "3300020524",
-   "title": "撒哈拉的故事",
-   "author": "三毛",
-   "readingTime": 0,
-   "notes": 0,
-   "finished": false
-  },
-  {
    "bookId": "3300058561",
    "title": "老派少女购物路线",
    "author": "洪爱珠",
@@ -2532,14 +2548,6 @@
    "finished": false
   },
   {
-   "bookId": "36557865",
-   "title": "爱的艺术",
-   "author": "[美]艾里希·弗洛姆",
-   "readingTime": 0,
-   "notes": 0,
-   "finished": false
-  },
-  {
    "bookId": "35652952",
    "title": "青色时代（三岛由纪夫作品系列）",
    "author": "三岛由纪夫",
@@ -2559,7 +2567,7 @@
    "bookId": "914291",
    "title": "昨天的云：回忆录四部曲之一",
    "author": "王鼎钧",
-   "readingTime": 2,
+   "readingTime": 8,
    "notes": 0,
    "finished": false
   },
@@ -2575,14 +2583,6 @@
    "bookId": "40726710",
    "title": "也许你该找个人聊聊",
    "author": "洛莉·戈特利布",
-   "readingTime": 0,
-   "notes": 0,
-   "finished": false
-  },
-  {
-   "bookId": "3300213232",
-   "title": "其中一个是谎言",
-   "author": "[韩]金爱烂",
    "readingTime": 0,
    "notes": 0,
    "finished": false
@@ -2639,7 +2639,7 @@
    "bookId": "3300087424",
    "title": "倾听村上春树",
    "author": "[美]杰伊·鲁宾",
-   "readingTime": 2,
+   "readingTime": 10,
    "notes": 0,
    "finished": false
   },
