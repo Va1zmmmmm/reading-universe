@@ -108,34 +108,62 @@ function initUniverse(hooks) {
     r: starR(b.rt) * 0.8 + 1.2,
   }));
 
-  // ---------- 离屏精灵 ----------
-  function makeDotSprite(aMid) {
+  // ---------- 离屏精灵（颜色由主题调色板决定，暗色=白点、亮色=墨点） ----------
+  function makeDotSprite(rgb) {
     const c = document.createElement('canvas');
     c.width = c.height = 64;
     const x = c.getContext('2d');
     const grad = x.createRadialGradient(32, 32, 0, 32, 32, 32);
-    grad.addColorStop(0, 'rgba(255,255,255,1)');
-    grad.addColorStop(0.18, `rgba(255,255,255,${aMid})`);
-    grad.addColorStop(0.5, 'rgba(255,255,255,0.08)');
-    grad.addColorStop(1, 'rgba(255,255,255,0)');
+    grad.addColorStop(0, `rgba(${rgb},1)`);
+    grad.addColorStop(0.18, `rgba(${rgb},0.6)`);
+    grad.addColorStop(0.5, `rgba(${rgb},0.08)`);
+    grad.addColorStop(1, `rgba(${rgb},0)`);
     x.fillStyle = grad;
     x.fillRect(0, 0, 64, 64);
     return c;
   }
-  const dotSprite = makeDotSprite(0.6);
-  const heroGlow = (() => {
+  function makeGlowSprite(coreRgb, rgb) {
     const c = document.createElement('canvas');
     c.width = c.height = 128;
     const x = c.getContext('2d');
     const grad = x.createRadialGradient(64, 64, 0, 64, 64, 64);
-    grad.addColorStop(0, 'rgba(255,246,226,0.95)');
-    grad.addColorStop(0.2, 'rgba(255,236,200,0.40)');
-    grad.addColorStop(0.55, 'rgba(255,224,180,0.10)');
-    grad.addColorStop(1, 'rgba(255,224,180,0)');
+    grad.addColorStop(0, `rgba(${coreRgb},0.95)`);
+    grad.addColorStop(0.2, `rgba(${rgb},0.40)`);
+    grad.addColorStop(0.55, `rgba(${rgb},0.10)`);
+    grad.addColorStop(1, `rgba(${rgb},0)`);
     x.fillStyle = grad;
     x.fillRect(0, 0, 128, 128);
     return c;
-  })();
+  }
+
+  // ---------- 主题调色板 ----------
+  // 开灯/关灯时 index.html 会广播 themechange 事件；色值真值全部在 index.html 的
+  // :root / html[data-theme=light] 里（--uv-* 变量），这里只做读取与拼装。
+  function readPalette() {
+    const v = (n, fb) => getComputedStyle(document.documentElement).getPropertyValue(n).trim() || fb;
+    const rgb = v('--uv-rgb', '235,238,245');
+    const labelRgb = v('--uv-label-rgb', rgb);
+    const glowCoreRgb = v('--uv-glow-core-rgb', '255,246,226');
+    const glowRgb = v('--uv-glow-rgb', '255,224,180');
+    return {
+      bg: v('--uv-bg', '#07080b'),
+      star: a => `rgba(${rgb},${a})`,
+      label: a => `rgba(${labelRgb},${a})`,
+      galaxyLabel: v('--uv-galaxy-label', 'rgba(150,156,168,.42)'),
+      hairline: v('--uv-hairline', 'rgba(255,255,255,.026)'),
+      constellation: v('--uv-constellation', 'rgba(255,255,255,.05)'),
+      core: v('--uv-core', '#fff'),
+      hotring: v('--uv-hotring', 'rgba(255,255,255,.75)'),
+      hotInk: v('--uv-hot-ink', 'rgba(255,255,255,.98)'),
+      heroInk: v('--uv-hero-ink', 'rgba(255,242,222,.96)'),
+      comet: v('--uv-comet', 'rgba(255,255,255,.5)'),
+      cometInk: v('--uv-comet-ink', 'rgba(232,235,242,.6)'),
+      dot: makeDotSprite(rgb),
+      glow: makeGlowSprite(glowCoreRgb, glowRgb),
+    };
+  }
+  let P = readPalette();
+  document.addEventListener('themechange', () => { P = readPalette(); });
 
   // 三层视差星空：再降密度和亮度，别和恒星抢
   const LAYERS = [
@@ -277,8 +305,8 @@ function initUniverse(hooks) {
       if (Math.hypot(flyTo.x - cam.x, flyTo.y - cam.y) < 2) flyTo = null;
     }
 
-    // 纯黑底
-    ctx.fillStyle = '#07080b';
+    // 纯黑底（亮色主题下为纸白底，配色见 readPalette）
+    ctx.fillStyle = P.bg;
     ctx.fillRect(0, 0, W, H);
 
     // 三层视差星空（稀疏、单色、微闪烁）
@@ -289,7 +317,7 @@ function initUniverse(hooks) {
         let sy = (p.y - cam.y * cam.s * L.f * 0.35) % th; if (sy < 0) sy += th;
         const a = p.a0 * (0.55 + 0.45 * Math.sin(t * p.f + p.p));
         if (a <= 0.02) continue;
-        ctx.fillStyle = `rgba(235,238,245,${a.toFixed(3)})`;
+        ctx.fillStyle = P.star(a.toFixed(3));
         ctx.beginPath(); ctx.arc(sx - 40, sy - 40, p.r, 0, 7); ctx.fill();
       }
     });
@@ -299,7 +327,7 @@ function initUniverse(hooks) {
     const placed = [];
 
     // 邻近星系勾连线：极暗极细，把星野连成一片（压到极低，避免在标签上读出划痕）
-    ctx.strokeStyle = 'rgba(255,255,255,0.026)';
+    ctx.strokeStyle = P.hairline;
     ctx.lineWidth = 0.6;
     ctx.beginPath();
     for (const [a, b] of galLinks) {
@@ -323,7 +351,7 @@ function initUniverse(hooks) {
       if (placed.some(p => overlap(p, box))) continue;
       placed.push(box);
       ctx.font = `11px ${SERIF}`;
-      ctx.fillStyle = 'rgba(150,156,168,0.42)';
+      ctx.fillStyle = P.galaxyLabel;
       ctx.fillText(name, sx, sy - topOff);
     }
     try { ctx.letterSpacing = '0px'; } catch (_) {}
@@ -337,7 +365,7 @@ function initUniverse(hooks) {
 
     // 星座连线：深缩放进某个星系时，同星系星之间极暗极细的线
     if (zoomRatio > 2.4) {
-      ctx.strokeStyle = 'rgba(255,255,255,0.05)';
+      ctx.strokeStyle = P.constellation;
       ctx.lineWidth = 0.6;
       const byGal = {};
       for (const s of stars) (byGal[s.g.name] = byGal[s.g.name] || []).push(s);
@@ -368,17 +396,17 @@ function initUniverse(hooks) {
         // 最亮的星，不是探照灯：光晕半径和透明度都克制
         const gs = Math.max(40, r * 10);
         ctx.globalAlpha = 0.5;
-        ctx.drawImage(heroGlow, sx - gs / 2, sy - gs / 2, gs, gs);
+        ctx.drawImage(P.glow, sx - gs / 2, sy - gs / 2, gs, gs);
         ctx.globalAlpha = 1;
       }
       const d = r * (isHero ? 5 : 4);
       ctx.globalAlpha = Math.min(1, s.light * twk * (hot ? 1 : 0.92));
-      ctx.drawImage(dotSprite, sx - d / 2, sy - d / 2, d, d);
+      ctx.drawImage(P.dot, sx - d / 2, sy - d / 2, d, d);
       // 实心核：保证低缩放下星点锐利，不糊成一团
-      ctx.beginPath(); ctx.arc(sx, sy, Math.max(0.7, r * 0.42), 0, 7); ctx.fillStyle = '#fff'; ctx.fill();
+      ctx.beginPath(); ctx.arc(sx, sy, Math.max(0.7, r * 0.42), 0, 7); ctx.fillStyle = P.core; ctx.fill();
       ctx.globalAlpha = 1;
       if (hot) {
-        ctx.strokeStyle = 'rgba(255,255,255,0.75)'; ctx.lineWidth = 1;
+        ctx.strokeStyle = P.hotring; ctx.lineWidth = 1;
         ctx.beginPath(); ctx.arc(sx, sy, r + 3.5, 0, 7); ctx.stroke();
       }
       // 标签分级：全景给每个 ≥3 书星系的时长 top1（≥10 书的星系加 top2）
@@ -397,9 +425,9 @@ function initUniverse(hooks) {
       placed.push(box);
       ctx.font = font;
       ctx.textAlign = 'left';
-      ctx.fillStyle = hot ? 'rgba(255,255,255,0.98)'
-        : isHero ? 'rgba(255,242,222,0.96)'
-        : `rgba(232,235,242,${(0.36 + s.light * 0.28).toFixed(2)})`;
+      ctx.fillStyle = hot ? P.hotInk
+        : isHero ? P.heroInk
+        : P.label((0.36 + s.light * 0.28).toFixed(2));
       ctx.fillText(s.b.title, box.x, sy + fs * 0.36);
     }
 
@@ -415,8 +443,8 @@ function initUniverse(hooks) {
       const tx = -vx / vl, ty = -vy / vl;
       const len = 110 * cam.s;
       const grad = ctx.createLinearGradient(sx, sy, sx + tx * len, sy + ty * len);
-      grad.addColorStop(0, 'rgba(255,255,255,0.5)');
-      grad.addColorStop(1, 'rgba(255,255,255,0)');
+      grad.addColorStop(0, P.comet);
+      grad.addColorStop(1, P.star(0));
       ctx.strokeStyle = grad;
       ctx.lineWidth = Math.max(0.8, 1.2 * cam.s);
       ctx.lineCap = 'round';
@@ -425,12 +453,12 @@ function initUniverse(hooks) {
       const r = Math.max(1.6, c.r * cam.s);
       const d = r * 5;
       ctx.globalAlpha = 0.95;
-      ctx.drawImage(dotSprite, sx - d / 2, sy - d / 2, d, d);
+      ctx.drawImage(P.dot, sx - d / 2, sy - d / 2, d, d);
       ctx.globalAlpha = 1;
       const hot = matches.has(c.b.id) || (hover && hover.b === c.b);
       if (hot || cam.s > 0.35) {
         ctx.font = `11px ${SERIF}`;
-        ctx.fillStyle = hot ? 'rgba(255,255,255,0.98)' : 'rgba(232,235,242,0.6)';
+        ctx.fillStyle = hot ? P.hotInk : P.cometInk;
         ctx.textAlign = 'left';
         ctx.fillText(c.b.title, sx + r + 5, sy + 4);
       }
