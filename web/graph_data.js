@@ -50,13 +50,6 @@ window.GRAPH = {
    "mentions": 0
   },
   {
-   "id": "n7",
-   "label": "第三十九条-初稿全本-20260830",
-   "group": "book",
-   "author": "",
-   "mentions": 0
-  },
-  {
    "id": "n8",
    "label": "刺杀骑士团长",
    "group": "book",
@@ -11276,7 +11269,7 @@ window.GRAPH = {
   }
  ],
  "stats": {
-  "books": 335,
+  "books": 334,
   "read": 0,
   "external": 47,
   "themes": 39,

@@ -1,6 +1,6 @@
 {
  "syncedAt": "2026-09-29T15:00:25.509Z",
- "totalBooks": 336,
+ "totalBooks": 334,
  "note": "脱敏版：去掉逐书读完日期/评分/书评/封面，保留书名作者阅读时长笔记数（聚合可视化所需）。",
  "books": [
   {
@@ -58,22 +58,6 @@
    "readingTime": 20602,
    "notes": 52,
    "finished": true
-  },
-  {
-   "bookId": "CB_D9A2QO2QK8tY76475U2HT9oR",
-   "title": "第三十九条-初稿全本-20260830",
-   "author": "",
-   "readingTime": 2916,
-   "notes": 13,
-   "finished": false
-  },
-  {
-   "bookId": "CB_1qMDtiDtM8h976375U2dS5AE",
-   "title": "第三十九条-初稿全本-20260830",
-   "author": "",
-   "readingTime": 3720,
-   "notes": 32,
-   "finished": false
   },
   {
    "bookId": "925981",
