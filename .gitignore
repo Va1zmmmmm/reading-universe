@@ -13,3 +13,11 @@ Thumbs.db
 
 # 打标中间产物（手动模式生成，不提交）
 data/_tagging_sheet.md
+
+# Never commit user workspaces or BYOK credentials.
+workspaces/
+private/
+tmp/
+.env
+.env.*
+*.key

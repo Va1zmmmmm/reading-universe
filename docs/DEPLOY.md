@@ -1,46 +1,21 @@
-# 部署说明
+# 在线版部署
 
-整个项目是**纯静态站**，无构建步骤。`web/` 目录就是可发布产物——`file://` 直接打开即可
-（无跨域、无外部 CDN），任意静态托管可发。
+在线版包含静态前端与临时分析服务。只上传 web/ 到 GitHub Pages 可浏览和导入资料，但不能完成 AI 分析。现有 Pages 自动发布已改为手动触发，避免代码提交自动替换现站。
 
-## 前置：数据 + 构建（若不用仓库自带的构建产物）
+## 独立托管
 
-```bash
-# 换用你自己的数据后重建（仓库自带 data/ 已构建好 web/，跳过此步也能部署）
-python pipeline/sync_from_weread.py <你的weread数据目录>   # 可选：换自己的书
-python pipeline/tag_books.py                              # 可选：打标
-python pipeline/build_universe.py   # → web/universe_data.js（星空）
-python pipeline/make_graph.py       # → web/graph_data.js（图谱）
-```
+1. 使用独立主机或容器平台；不要把用户资料放入公开目录，也不要默认暴露作者原服务器。
+2. 只部署 server.py 与 web/；用户 key 由页面临时提供，不设置作者密钥。无需 data/、邻接工作库或私有配置。
+3. 配置 READING_ORIGINS=https://实际域名。前端与 /api/ 保持同域；反向代理设置 Host、X-Forwarded-Proto，使用有效 TLS 证书。
+4. Python 服务运行在普通账户；可参考 deploy/reading-universe.service 与 deploy/nginx.conf.example。Dockerfile 可用于独立容器平台；镜像构建及该生产配置本轮尚未实测。
+5. 任务只在内存，15 分钟过期清理；每会话串行运行，全局 4 个分析线程。服务重启不会恢复任务或 key，用户已下载的项目包可恢复已完成内容。
 
-## 部署到 GitHub Pages（推荐，零成本）
+## 上线闸门
 
-本仓库已配 `.github/workflows/pages.yml`：push 到 main 即自动把 `web/` 部署到 Pages。
+- 新浏览器会话用非作者数据完成导入、真实模型小样本生成、手改、保存恢复与公开导出。
+- 两个会话互不能访问对方任务；反向代理与应用日志不保存 key 或请求体。
+- 确认 TLS、Secure cookie、来源校验、输入大小、取消/过期清理与限额行为。
+- 公开目录只含预期前端与已审阅作者案例；server.py、数据目录、仓库和私人包不可公开读取。
+- 上线前保留旧静态产物与 DNS/路由恢复步骤。仅 HTTP 200 不代表全部验收完成。
 
-1. 仓库 Settings → Pages → Source 选 **GitHub Actions**
-2. 访问 `https://<user>.github.io/reading-universe/`（星空加 `?universe`）
-
-## 部署到 Nginx
-
-```bash
-sudo cp -r web/ /var/www/reading-universe/
-```
-
-```nginx
-server {
-    listen 80;
-    server_name example.com;
-    root /var/www/reading-universe;
-    index index.html;
-}
-```
-
-## 部署到任意静态托管
-
-把 `web/` 目录拖上去即可（Vercel / Netlify / 对象存储）。
-
-## 隐私检查（发布前必做）
-
-- `web/universe_data.js` / `web/graph_data.js` 由 `data/` 生成。发布前检查 `data/`
-  里没有划线原文、逐书读完日期、评分等个人层内容（仓库自带的脱敏版是干净的）。
-- 用自己数据生成后，若包含不想公开的书，删掉对应条目再构建。
+当前源代码已具备本地可运行路径；后端托管位置和真实用户 key 的调用验收尚待完成。不要把此文档当成已上线证明。

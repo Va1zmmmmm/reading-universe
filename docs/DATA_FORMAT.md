@@ -1,67 +1,30 @@
-# 数据格式说明（DATA_FORMAT）
+# 数据格式
 
-本仓库三份输入数据的字段级说明。想用自己的数据复现，把这三份对齐即可。
-
-## data/books.json —— 书单元数据
+## 导入书目
 
 ```json
-{
-  "totalBooks": 336,
-  "books": [
-    {
-      "bookId": "36212379",
-      "title": "镜子之家（三岛由纪夫作品系列）",
-      "author": "三岛由纪夫",
-      "readingTime": 9353,
-      "notes": 57,
-      "finished": true
-    }
-  ]
-}
+{"books":[{"bookId":"book-a","title":"书名","author":"作者","readingTime":3600,"notes":3,"highlights":[{"text":"自己的划线"}],"annotations":[{"text":"自己的笔记"}]}]}
 ```
 
-| 字段 | 类型 | 用途 | 必填 |
-|---|---|---|---|
-| `bookId` | string | 唯一 ID（对接 theme_tags） | ✅ |
-| `title` | string | 书名（恒星/节点显示） | ✅ |
-| `author` | string | 作者 | ✅ |
-| `readingTime` | number | 阅读秒数 → 恒星半径 / 节点大小 | ✅（无则 0） |
-| `notes` | number | 笔记数 → 恒星亮度 | ✅（无则 0） |
-| `finished` | bool | 是否读完（布局/星尘层） | 可选 |
+ID 必填且唯一；可用 id 代替 bookId。书目字段支持 weread-skill 现有缓存格式：notes 为对象时取 total，finishTime/affectionScore/myReview 保留在私人项目。
+合并别名字段 mergedInto 非空时跳过该条，原文件不改写。
 
-> `readingTime` 和 `notes` 是唯一真正参与视觉映射的字段。脱敏版不含逐书读完日期/评分/书评/封面。
+资料目录可含 books.json、highlights/{id}.json（数组、markText/text/content）、notes/{id}.md、cards/{id}.md、cards/links/*.md、theme_tags.json、themes/*.md 和 links.json。ID 对接书目，标题只用于旧关联资料的辅助匹配。
 
-## data/theme_tags.json —— 书 → 主题标签
+## 私人项目
 
-```json
-{
-  "36212379": { "title": "镜子之家（三岛由纪夫作品系列）", "tags": ["三岛由纪夫", "自我认同", "死亡"] }
-}
-```
+format=reading-universe-private，version=1。包含 books（标准化元数据和 evidence）、analysis（标签/摘要/证据ID/缓存指纹）、links、linkCache、cards、edits、settings。
+evidence 含 id/text/kind/source/included；可逐条关闭用于 AI 分析。edits 独立保留主题、卡片、人工关联与移除配对；settings 有 wordlist 和 aliases。
+导入时仅接收已定义字段，忽略 key、cookie、会话令牌等字段。
 
-每本书 1~5 个标签，标签词自由（不限于内置词表）。标签决定书属于哪些星系。
-标签来自你的判断——它是这本书在你阅读里的"归属"。
+links 为 source/target/targetType/type/reason/evidenceIds/basis；targetType 为 book/concept/external，type 为 same_topic/complement/contrast/reference，basis 为 evidence/manual/imported。引用无法回溯到原书时标为 imported。
 
-## data/themes/*.md —— 主题专题卡（可选，但强烈建议）
+## 公开网站包
 
-文件名 = 主题名。点星系时弹卡展示。结构：
+不直接导出私人项目。根据所选书目重建 graph_data.js/universe_data.js 与专题卡；只包含书名、作者、主题、可选指标和在库书的关联拓扑。原文、日期、评分和自由文字不输出。
+包内 index.html、viewer-data.js、universe.js、lib/vis-network.min.js 及数据脚本可直接离线打开。
 
-```markdown
-# 主题卡：死亡
+## 兼容快照
 
-- 书目：70 本
-  - 《失明症漫记（罗翔推荐）》
-  - 《第七天》
-
-- 主题轨迹：（可选，可 AI 生成）这个主题在你的阅读里怎么演变——哪本最先提出、哪些推进/翻转、最终落定。
-
-- 交界：（可选）与它最常共现的主题。
-```
-
-## 从微信读书数据生成这三份
-
-1. **books.json**：weread-skill `sync.mjs` 导出原始 books.json → `python pipeline/sync_from_weread.py <目录>` 转成上面的脱敏格式
-2. **theme_tags.json**：`python pipeline/tag_books.py`（AI 按 39 词表打标，见 data/theme_wordlist.md）
-3. **themes/*.md**：`python pipeline/make_theme_cards.py`（骨架）+ 人工/AI 补轨迹
-
-任何能产出上面结构的工具都行，不限定 weread-skill。
+node tools/cli.mjs --workspace <目录> --compat <输出数据目录> 可导出 theme_tags.json（bookId → title/tags）与 themes/*.md，供年度报告/音乐项目使用。不要把兼容快照设为第二个编辑源。
+reading-map 原有 build_graph.py/build_universe.py 作为适配入口调用同一核心，读取上游与现有标签，不改写上游资料或现有标签/专题卡。

@@ -1,81 +1,46 @@
 # 阅读宇宙 · Reading Universe
 
-把读过的书变成一片星空 / 一张思维版图。数据来自你自己的微信读书（weread-skill 导出），
-用一条可复现的管线生成：**书 → 主题标签 → 星图/图谱**。
+用自己的书目、划线与笔记生成可探索的思想图谱和阅读星空。在线版免注册，原始文件在浏览器读取；AI 分析仅临时发送必要片段，用户自带 API key，网站不保存 key。
 
-> 这个仓库含**作者的真实脱敏数据**（书名/作者/主题标签/阅读时长，无划线原文/读完日期/评分），
-> clone 后可直接看到效果；换用你自己的微信读书数据即可生成你自己的星图。
+作者真实公开案例由用户显式选择；新用户工作区默认为空。私人项目包与公开网站包分别保存，人工修改不会被重新生成覆盖。
 
-![universe 预览](docs/screenshot-universe.png)
+## 普通用户
 
-## 两种视图
+在网站选择文件 → 检查材料 → 可选 AI 分析 → 浏览/修订 → 保存私人项目或导出公开版本。
 
-- **宇宙模式**（`web/index.html?universe`）：恒星=书（越大读得越久、越亮笔记越多）、星系=39 个主题、彗星=离群书。拖拽/缩放/搜索。
-- **图谱模式**（`web/index.html`）：书 × 主题 的知识网络，点节点看这本书通向哪里。
+详见 [使用说明](docs/USER_GUIDE.md)。仅书单可生成基础视图，有笔记/划线时才分析有依据的具体联系。
 
-## 快速开始（5 步复现）
+## 本地运行与自部署
+
+Python 3.10+ 即可运行网站与任务服务，无第三方运行依赖：
 
 ```bash
-# 0. 环境：Python 3.10+，无第三方依赖（纯标准库）
-# 1. 准备数据：你有两种选择
-#    a. 直接用仓库自带的真实脱敏数据（clone 后 data/ 里已有）→ 跳过 2~4
-#    b. 用自己的微信读书数据：把 weread-skill 的数据目录传给 sync 脚本
-python pipeline/sync_from_weread.py <你的weread-skill数据目录>
-
-# 2.（用自己的书才需要）给书打主题标签（39 词表，AI 打或手动）
-export LLM_API_KEY=你的DeepSeek或OpenAI兼容key
-python pipeline/tag_books.py          # AI 打标；或 --manual 手动填表
-#    ⚠️ 若一本都没打上（日志全是 `LLM 失败` 或干脆没有输出），先查这两条 —— 2026-09-30 已修：
-#      · **403 / Cloudflare 1010** → 请求缺 `User-Agent`（旧版没带；现已带，自建网关时也请确保保留）
-#      · **跑完但全部无标签** → `max_tokens` 太小，被模型的思考过程吃光，正文回空串、脚本静默返回 []
-#        （旧版写死 200；现已提到 4000。**换模型后如果它更"能想"，这个值可能还要加**）
-
-# 3.（可选）生成主题卡（点星系弹的轨迹卡）
-python pipeline/make_theme_cards.py   # 骨架；--llm 让 AI 写轨迹
-
-# 4. 构建两种视图的数据
-python pipeline/build_universe.py     # → web/universe_data.js（星空）
-python pipeline/make_graph.py         # → web/graph_data.js（图谱）
-
-# 5. 打开
-#    web/index.html（图谱）或 web/index.html?universe（星空）
+python server.py --port 8766
 ```
 
-仓库自带的 data/ 是作者真实脱敏数据（336 本书 / 333 本有主题标签 / 39 主题卡），
-上面 1~4 步已跑过，clone 后直接做第 5 步就能看效果。
+打开 http://127.0.0.1:8766/。模型调用使用你在页面填写的服务商和 key；不会读取作者 cc_config 或个人工作库配置。
 
-## 数据是什么、从哪来
+生产环境须独立托管后端、配置 HTTPS 与 READING_ORIGINS。详见 [部署](docs/DEPLOY.md)、[架构与边界](docs/ONLINE_ARCHITECTURE.md)。GitHub Pages 只能提供静态内容，不能单独完成在线 AI 分析。
 
-| 文件 | 内容 | 说明 |
-|---|---|---|
-| `data/books.json` | 书单元数据（title/author/readingTime/notes） | weread-skill `sync.mjs` 导出后经 `sync_from_weread.py` 脱敏 |
-| `data/theme_tags.json` | 每本书的主题标签 | `tag_books.py` 按 39 词表打标 |
-| `data/themes/*.md` | 每个主题的专题卡 | `make_theme_cards.py` 生成骨架 + 人工/AI 补轨迹 |
-| `data/theme_wordlist.md` | 39 个主题词表 | 打标口径 |
+## 开发者离线生成
 
-字段级说明见 [`docs/DATA_FORMAT.md`](docs/DATA_FORMAT.md)。
+Node.js 18+；必须显式指定私人工作区，不默认使用作者样例：
 
-## 隐私边界（重要）
+```bash
+node tools/cli.mjs --workspace /private/my-reading --import /path/to/weread-data
+node tools/cli.mjs --workspace /private/my-reading --public --exclude PRIVATE_BOOK_ID --out /path/to/public-site
+```
 
-本项目只发布**聚合可视化**：
+CLI 使用与网页相同的 core.mjs。输入、项目包及兼容字段见 [数据格式](docs/DATA_FORMAT.md)。旧 pipeline 脚本保留供历史记录参考，不再作为新用户复现入口。
 
-- ✅ 公开：书名 + 作者、主题标签、阅读时长（聚合为星的大小）、笔记数（聚合为星的亮度）、主题关联网络
-- ❌ 不公开：**划线金句原文**（版权 + 隐私）、**逐书读完日期**（阅读节奏指纹）、评分、书评、封面
+## 验证
 
-`data/books.json` 是脱敏产物（无上述个人层字段）。如果你用自己数据生成，发布前
-也请按此边界检查 `data/` 里没有不想公开的内容。
+```bash
+node --test tests/core.test.mjs
+python -m unittest discover -s tests -p test_server.py -v
+python tests/browser_test.py
+```
 
-## 数据来源说明
+浏览器测试需要已安装 Playwright 和浏览器，使用模拟 AI 调用；不替代真实模型及线上验收。
 
-你的微信读书数据可用 [weread-skills](https://github.com/) 这类工具导出
-（其 `sync.mjs` 产出 `books.json`，含 title/author/readingTime/notes/finishTime 等字段）。
-本仓库的 `sync_from_weread.py` 会把任意符合格式的数据整理成 `data/books.json`。
-只要你把阅读数据导成那个字段结构，不一定要用 weread-skills。
-
-## 部署
-
-纯静态站，任意托管可发（GitHub Pages / Nginx / Vercel / 对象存储）。见 `docs/DEPLOY.md`。
-
-## License
-
-MIT
+MIT。私人原始资料与 API key 不应提交仓库。data/ 为历史公开样例；在线样例位于 web/examples/author-public.json。

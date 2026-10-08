@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>Reading Universe · 阅读宇宙</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script>try{if(localStorage.getItem("readingmap_theme")==="light")document.documentElement.dataset.theme="light"}catch(e){}</script>
+<style>
+  /* 明暗双主题：默认暗色（= 原有观感），html[data-theme=light] 切「纸白」。
+     颜色一律走 var(--*)，不要再写死色值——写死会在关灯/开灯后变成不可读文字。
+     localStorage key = readingmap_theme，防闪烁脚本在 <head> 里（CSS 之前执行）。 */
+  :root { color-scheme: dark;
+    --bg: #0f1115; --ink: #d7dae0; --ink-strong: #fff;
+    --ink-2: #c8ccd4; --ink-3: #8a90a0; --ink-4: #71767f; --ink-5: #565b66;
+    --line: #2a2f3a; --line-2: #3a3f4a;
+    --surface: rgba(20,23,30,.85); --surface-2: rgba(20,23,30,.92); --field: #171a21;
+    --link: #7ec8ff; --tip-bg: rgba(10,11,15,.9); --tip-ink: #d8dce4;
+    --accent: #9b6dd7; --accent-soft: #c9b8e8; --accent-ink: #e8d9ff;
+    --chip-bg: #232a38; --chip-ink: #a9c8f0;
+    --poster-sub: #9aa0b0; --poster-legend: #6a7080;
+    --btn-bg: rgba(23,26,33,.9); --btn-ink: #b9bec8;
+    --edge-theme: #9b6dd733; --edge-internal: #4f8ff755; --edge-plain: #3a3f4a;
+    --edge-dim: rgba(72,80,96,.25); --edge-dim-poster: rgba(72,80,96,.10);
+    --node-dim: 0.18; --node-dim-poster: 0.08;
+    --hot-theme: #cfa9ff; --hot: #dfe7f5;
+    --glow: rgba(255,255,255,.9); --glow-2: rgba(200,180,255,.55);
+    /* universe 皮肤（独立 canvas 渲染层）配色 */
+    --uv-bg: #07080b; --uv-rgb: 235,238,245; --uv-label-rgb: 232,235,242;
+    --uv-galaxy-label: rgba(150,156,168,.42);
+    --uv-hairline: rgba(255,255,255,.026); --uv-constellation: rgba(255,255,255,.05);
+    --uv-core: #fff; --uv-hotring: rgba(255,255,255,.75);
+    --uv-hot-ink: rgba(255,255,255,.98); --uv-hero-ink: rgba(255,242,222,.96);
+    --uv-glow-core-rgb: 255,246,226; --uv-glow-rgb: 255,224,180;
+    --uv-comet: rgba(255,255,255,.5); --uv-comet-ink: rgba(232,235,242,.6);
+  }
+  html[data-theme=light] { color-scheme: light;
+    --bg: #f6f5f2; --ink: #2b303a; --ink-strong: #12151c;
+    --ink-2: #454c59; --ink-3: #6f7686; --ink-4: #737a89; --ink-5: #929aa9;
+    --line: #dcdfe6; --line-2: #c7ccd6;
+    --surface: rgba(255,255,255,.88); --surface-2: rgba(255,255,255,.95); --field: #fff;
+    --link: #1f6fb2; --tip-bg: rgba(255,255,255,.95); --tip-ink: #2b303a;
+    --accent: #7a4fc0; --accent-soft: #5b3a94; --accent-ink: #4a2d80;
+    --chip-bg: #e8ecf6; --chip-ink: #3a5f96;
+    --poster-sub: #5b6272; --poster-legend: #7b8292;
+    --btn-bg: rgba(255,255,255,.92); --btn-ink: #5c6373;
+    --edge-theme: #9b6dd766; --edge-internal: #4f8ff788; --edge-plain: #c3c8d3;
+    --edge-dim: rgba(140,147,162,.30); --edge-dim-poster: rgba(140,147,162,.14);
+    --node-dim: 0.18; --node-dim-poster: 0.08;
+    --hot-theme: #7a4fc0; --hot: #2b303a;
+    --glow: rgba(30,34,44,.85); --glow-2: rgba(120,90,190,.55);
+    --uv-bg: #f4f3f0; --uv-rgb: 44,50,64; --uv-label-rgb: 44,50,64;
+    --uv-galaxy-label: rgba(96,103,116,.55);
+    --uv-hairline: rgba(30,36,50,.05); --uv-constellation: rgba(30,36,50,.08);
+    --uv-core: #1f242e; --uv-hotring: rgba(20,24,34,.75);
+    --uv-hot-ink: rgba(15,18,26,.98); --uv-hero-ink: rgba(122,78,20,.95);
+    --uv-glow-core-rgb: 214,162,80; --uv-glow-rgb: 206,150,64;
+    --uv-comet: rgba(30,36,50,.45); --uv-comet-ink: rgba(44,50,64,.62);
+  }
+  /* 开灯/关灯按钮（胶囊，落在 HUD / universe 顶栏里；universe 顶栏 pointer-events:none，故需显式打开） */
+  .themeBtn { margin-left: 8px; padding: 2px 10px; border-radius: 999px;
+    border: 1px solid var(--line-2); background: var(--btn-bg); color: var(--btn-ink);
+    cursor: pointer; font-family: inherit; font-size: 12px; letter-spacing: 1px;
+    white-space: nowrap; vertical-align: 1px; pointer-events: auto;
+    transition: border-color .15s, color .15s; }
+  .themeBtn:hover { border-color: var(--accent); color: var(--accent); }
+  html, body { margin: 0; height: 100%; background: var(--bg); color: var(--ink);
+    font-family: "Microsoft YaHei", "PingFang SC", sans-serif; }
+  #graph { position: absolute; inset: 0; }
+  #hud { position: absolute; top: 12px; left: 12px; z-index: 2;
+    background: var(--surface); border: 1px solid var(--line); border-radius: 10px;
+    padding: 10px 14px; font-size: 13px; line-height: 1.7; }
+  #hud b { color: var(--ink-strong); }
+  #hud .legend span { display: inline-block; width: 10px; height: 10px;
+    border-radius: 50%; margin: 0 4px 0 10px; }
+  #panel { position: absolute; top: 12px; right: 12px; width: 340px; max-height: 80vh;
+    overflow: auto; z-index: 2; background: var(--surface-2);
+    border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px;
+    font-size: 13px; line-height: 1.8; display: none; }
+  #panel h3 { margin: 0 0 6px; font-size: 16px; color: var(--ink-strong); }
+  #panel .meta { color: var(--ink-3); margin-bottom: 8px; }
+  #panel .edge { border-top: 1px dashed var(--line); padding: 6px 0; }
+  #panel .edge .to { color: var(--link); }
+  #panel .close { float: right; cursor: pointer; color: var(--ink-3); }
+  #panel .tagchip { display: inline-block; background: var(--chip-bg); border-radius: 8px;
+    padding: 1px 8px; margin: 2px 4px 2px 0; color: var(--chip-ink); }
+  #search { width: 150px; background: var(--field); color: var(--ink);
+    border: 1px solid var(--line); border-radius: 6px; padding: 3px 8px; }
+  /* universe（阅读宇宙皮肤，?universe）：独立 canvas 渲染层，藏掉图谱 DOM */
+  #ucv, #uhud, #utip { display: none; }
+  body.universe #graph, body.universe #hud, body.universe #posterTitle { display: none; }
+  body.universe #ucv { display: block; position: absolute; inset: 0;
+    width: 100%; height: 100%; cursor: grab; }
+  /* universe HUD：编辑排版风顶部导航（细字、大写字距、无底色盒子） */
+  body.universe #uhud { display: flex; position: absolute; top: 0; left: 0; right: 0;
+    justify-content: space-between; align-items: baseline; padding: 24px 38px;
+    background: none; border: none; z-index: 2; pointer-events: none;
+    font-size: 10px; letter-spacing: 3px; color: var(--ink-4); }
+  #uhud .brand { font-size: 19px; color: var(--ink-2); letter-spacing: 8px;
+    font-family: "Songti SC", "STSong", "SimSun", serif; }
+  #uhud .brand span { font-size: 10px; color: var(--ink-4); letter-spacing: 3px;
+    margin-left: 12px; font-family: "Microsoft YaHei", sans-serif; }
+  #usearch { width: 110px; background: transparent; color: var(--ink-2);
+    border: none; border-bottom: 1px solid var(--line-2); border-radius: 0;
+    padding: 2px 2px; font-size: 11px; letter-spacing: 2px; pointer-events: auto; }
+  #usearch:focus { outline: none; border-bottom-color: var(--ink-3); }
+  #usearch::placeholder { color: var(--ink-5); }
+  #utip { position: fixed; z-index: 3; pointer-events: none;
+    background: var(--tip-bg); border: 1px solid var(--line);
+    padding: 4px 10px; font-size: 11px; letter-spacing: 1px; color: var(--tip-ink);
+    max-width: 320px; }
+  /* 海报模式（?poster）：大标题 + 藏起交互 HUD */
+  #posterTitle { display: none; position: absolute; top: 30px; left: 40px; z-index: 2; }
+  body.poster #posterTitle { display: block; }
+  body.poster #hud { display: none; }
+  #posterTitle h1 { margin: 0; font-size: 46px; color: var(--ink-strong); letter-spacing: 3px; }
+  #posterTitle .sub { margin-top: 10px; font-size: 19px; color: var(--poster-sub); }
+  #posterTitle .legend { margin-top: 16px; font-size: 15px; color: var(--poster-legend); }
+  #posterTitle .legend span { display: inline-block; width: 12px; height: 12px;
+    border-radius: 50%; margin: 0 6px 0 14px; vertical-align: -1px; }
+  /* 海报模式下的详情面板放大 */
+  body.poster #panel { width: 640px; max-height: 88vh; font-size: 19px; }
+  body.poster #panel h3 { font-size: 28px; }
+  /* 主题卡渲染 */
+  #panel .mdcard { margin-top: 8px; }
+  #panel .mdcard p { margin: 8px 0; line-height: 1.9; }
+  #panel .mdcard ul { margin: 4px 0 4px 0; padding-left: 18px; }
+  #panel .mdcard li { margin: 3px 0; }
+  #panel .mdcard .mdh { font-size: 15px; color: var(--ink-strong); font-weight: bold; margin: 12px 0 4px; }
+  #panel .mdcard .mdq { border-left: 3px solid var(--accent); padding: 2px 10px; margin: 6px 0;
+    color: var(--accent-soft); }
+  #panel .mdcard b { color: var(--accent-ink); }
+  /* lite（朋友圈版）：标题更大，经平台压缩后仍可读 */
+  body.lite #posterTitle h1 { font-size: 64px; }
+  body.lite #posterTitle .sub { font-size: 27px; }
+  body.lite #posterTitle .legend { font-size: 21px; }
+</style>
+</head>
+<body>
+<div id="graph"></div>
+<div id="hud">
+  <b>Reading Universe</b> · <span id="stats"></span><button class="themeBtn" type="button">☀ 开灯</button><br>
+  <span class="legend"><span style="background:#4f8ff7"></span>书
+  <span style="background:#5b8c8a"></span>库外书目
+  <span style="background:#c98a3d"></span>概念/主题
+  <span style="background:#9b6dd7"></span>主题枢纽
+  <span style="background:#333b49"></span>读完未蒸</span><br>
+  <input id="search" placeholder="搜书名/概念…">
+  <label><input type="checkbox" id="onlyInternal"> 只看在库连线</label>
+  <label><input type="checkbox" id="themeLayer" checked> 主题层</label>
+</div>
+<div id="panel"></div>
+<canvas id="ucv"></canvas>
+<div id="uhud">
+  <div class="brand">阅读宇宙<span>READING UNIVERSE</span></div>
+  <div class="nav"><span id="ustats"></span> · <input id="usearch" placeholder="搜索书名"><button class="themeBtn" type="button">☀ 开灯</button></div>
+</div>
+<div id="utip"></div>
+<div id="posterTitle">
+  <h1>Reading Universe · 阅读宇宙</h1>
+  <div class="sub" id="posterSub"></div>
+  <div class="legend"><span style="background:#4f8ff7"></span>在库书目
+    <span style="background:#5b8c8a"></span>库外书目
+    <span style="background:#c98a3d"></span>概念
+    <span style="background:#9b6dd7"></span>主题枢纽
+    <span style="background:#333b49"></span>读完未蒸·星尘</div>
+</div>
+<script src="lib/vis-network.min.js"></script>
+<script src="viewer-data.js"></script>
+<script>
+const G = window.GRAPH;
+const POSTER = location.search.includes('poster');
+// lite：朋友圈特供版——平台会压到 ~2560px + JPEG 重压，
+// 对策不是堆像素而是大字、粗线、少标签，让压缩后仍有可读性
+const LITE = location.search.includes('lite');
+// universe：阅读宇宙皮肤（独立 canvas 渲染层，数据由 build_universe.py 生成）
+const UNIVERSE = location.search.includes('universe');
+if (UNIVERSE) document.body.classList.add('universe');
+
+// ---------- 开灯 / 关灯 ----------
+// 默认暗色（= 页面原本的观感），切换 = html[data-theme=light]。色值一律从 CSS 变量取，
+// 保证与 <style> 里的 :root / html[data-theme=light] 是同一份真值。
+const THEME_KEY = 'readingmap_theme';
+const cssVar = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const isLight = () => document.documentElement.dataset.theme === 'light';
+const themeBtns = [...document.querySelectorAll('.themeBtn')];
+const themeListeners = [];
+function paintThemeBtn() {
+  // 文案显示「点击后的动作」
+  themeBtns.forEach(b => { b.textContent = isLight() ? '🌙 关灯' : '☀ 开灯'; });
+}
+function setTheme(light, persist) {
+  document.documentElement.dataset.theme = light ? 'light' : 'dark';
+  if (persist) {
+    try { localStorage.setItem(THEME_KEY, light ? 'light' : ''); } catch (e) {}
+  }
+  paintThemeBtn();
+  themeListeners.forEach(fn => fn());
+  // universe 皮肤是独立 canvas 渲染层（另一个文件），用事件通知它重取配色
+  document.dispatchEvent(new CustomEvent('themechange'));
+}
+themeBtns.forEach(b => b.addEventListener('click', () => setTheme(!isLight(), true)));
+paintThemeBtn();
+
+if (POSTER) {
+  document.body.classList.add('poster');
+  if (LITE) document.body.classList.add('lite');
+  document.getElementById('posterSub').textContent =
+    `阅读星野 · 读完 ${G.stats.books + (G.stats.read || 0)} 本 · 主题 ${G.stats.themes || 0} 个 · ${G.stats.edges} 条连线`;
+}
+document.getElementById('stats').textContent =
+  `${G.stats.books} 本书 · ${G.stats.read || 0} 本读完未蒸 · ${G.stats.external} 个外部节点 · ${G.stats.themes || 0} 个主题枢纽 · ${G.stats.edges} 条连线`;
+
+// 详情面板与迷你 md 渲染器：默认图谱与 universe 皮肤共用（mdMini 覆盖主题卡用到的结构：标题/列表/引用/粗体）
+const panel = document.getElementById('panel');
+function mdMini(md) {
+  const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  const inline = s => esc(s).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
+  let html = '', depth = 0;
+  const closeTo = d => { while (depth > d) { html += '</ul>'; depth--; } };
+  for (const line of md.split('\n')) {
+    const m = line.match(/^(\s*)- (.*)$/);
+    if (m) {
+      const d = Math.floor(m[1].length / 2) + 1;
+      while (depth < d) { html += '<ul>'; depth++; }
+      closeTo(d);
+      html += `<li>${inline(m[2])}</li>`;
+      continue;
+    }
+    closeTo(0);
+    if (!line.trim()) continue;
+    if (line.startsWith('# ')) html += `<div class="mdh">${inline(line.slice(2))}</div>`;
+    else if (line.startsWith('> ')) html += `<div class="mdq">${inline(line.slice(2))}</div>`;
+    else html += `<p>${inline(line)}</p>`;
+  }
+  closeTo(0);
+  return html;
+}
+
+if (!UNIVERSE) {
+const GROUPS = {
+  book:     { color: { background: '#4f8ff7', border: '#2c5cae' }, shape: 'dot' },
+  ext_book: { color: { background: '#5b8c8a', border: '#3d6361' }, shape: 'dot' },
+  concept:  { color: { background: '#c98a3d', border: '#96622a' }, shape: 'diamond' },
+  theme:    { color: { background: '#9b6dd7', border: '#6f43ab' }, shape: 'star' },
+  read:     { color: { background: '#333b49', border: '#232833' }, shape: 'dot' },
+};
+
+const urlq = new URLSearchParams(location.search);
+const FOCUS = urlq.get('focus'), BOOK = urlq.get('book');
+// 焦点机位：focus=枢纽特写 / book=单书特写（带详情面板）
+let focusId = null;
+if (FOCUS || BOOK) {
+  const q = FOCUS || BOOK;
+  const hit = G.nodes.find(n => n.label === q) || G.nodes.find(n => n.label.includes(q));
+  if (hit) focusId = hit.id;
+}
+const neighborIds = new Set();
+if (focusId) {
+  neighborIds.add(focusId);
+  G.edges.forEach(e => {
+    if (e.from === focusId) neighborIds.add(e.to);
+    if (e.to === focusId) neighborIds.add(e.from);
+  });
+}
+
+// 星尘（读完未蒸）无连线，力导布局会把它们甩到远处带歪取景——
+// 固定成主星系外的环带，带抖动避免机械感
+{
+  const dust = G.nodes.filter(n => n.group === 'read');
+  dust.forEach((n, i) => {
+    const a = i / dust.length * Math.PI * 2;
+    const r = 1050 + (i % 3) * 110 + ((i * 7919) % 90);
+    n._x = Math.cos(a) * r; n._y = Math.sin(a) * r * 0.72;
+  });
+}
+
+const tooltipText = s => String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+const allNodes = G.nodes.map(n => ({
+  id: n.id,
+  // 海报模式：标签只给主题枢纽、连线多的书目、焦点邻域；其余留白点，防糊
+  // lite 版更狠：书目要连线≥3 才配拥有名字
+  label: (POSTER && !(n.group === 'theme'
+                      || (n.group === 'book' && n.mentions >= (LITE ? 3 : 2))
+                      || neighborIds.has(n.id)))
+    ? undefined : n.label,
+  group: n.group,
+  value: n.mentions,
+  // 星尘（读完未蒸）：固定小点，不随 mentions 缩放
+  size: n.group === 'read' ? (POSTER ? 5 : 3) : undefined,
+  x: n._x, y: n._y,
+  fixed: n.group === 'read',
+  title: tooltipText(`${n.label}${n.author ? '｜' + n.author : ''}｜被连线 ${n.mentions} 次`),
+  _raw: n,
+}));
+const allEdges = G.edges.map((e, i) => ({
+  id: i, from: e.from, to: e.to, title: tooltipText(e.title),
+  color: { color: e.theme ? cssVar('--edge-theme') : (e.internal ? cssVar('--edge-internal') : cssVar('--edge-plain')) },
+  _internal: e.internal, _theme: !!e.theme,
+}));
+
+const nodes = new vis.DataSet(allNodes);
+const edges = new vis.DataSet(allEdges);
+const net = new vis.Network(document.getElementById('graph'),
+  { nodes, edges },
+  {
+    groups: GROUPS,
+    nodes: { font: { color: cssVar('--ink'), size: POSTER ? (LITE ? 32 : 22) : 13, face: 'Microsoft YaHei' },
+      scaling: { min: POSTER ? (LITE ? 12 : 8) : 6, max: POSTER ? (LITE ? 50 : 34) : 26 }, borderWidth: 1.5 },
+    edges: { width: POSTER ? (LITE ? 2.6 : 1.6) : 1.2, smooth: { type: 'continuous' } },
+    physics: { solver: 'forceAtlas2Based',
+      forceAtlas2Based: POSTER
+        ? { gravitationalConstant: -110, springLength: 170 }
+        : { gravitationalConstant: -60, springLength: 120 },
+      stabilization: { iterations: 300 } },
+    interaction: { hover: true, tooltipDelay: 120 },
+  });
+
+// 图谱层重绘：底色/字色/连线/焦点高亮全部按当前主题的 CSS 变量重取一遍
+// （vis-network 的颜色是构造/update 时烤进画布的，切主题必须显式重画）
+function paintGraph() {
+  nodes.update(allNodes.map(n => ({ id: n.id, font: { color: cssVar('--ink') } })));
+  edges.update(allEdges.map(e => ({ id: e.id,
+    color: { color: e._theme ? cssVar('--edge-theme')
+      : (e._internal ? cssVar('--edge-internal') : cssVar('--edge-plain')) } })));
+  if (focusId) paintFocus();
+}
+
+// 焦点机位高亮：非邻域压暗，焦点连线提亮加粗，焦点与邻星加光晕
+function paintFocus() {
+  nodes.update(allNodes.filter(n => !neighborIds.has(n.id))
+    .map(n => ({ id: n.id, opacity: POSTER ? 0.08 : 0.18, font: { color: 'rgba(0,0,0,0)' } })));
+  edges.update(allEdges.map(e => {
+    const hot = e.from === focusId || e.to === focusId;
+    return { id: e.id,
+      color: { color: hot ? (e._theme ? cssVar('--hot-theme') : cssVar('--hot'))
+                          : (POSTER ? cssVar('--edge-dim-poster') : cssVar('--edge-dim')) },
+      width: hot ? (POSTER ? (LITE ? 5 : 3.5) : 2.5) : 1 };
+  }));
+  nodes.update([{ id: focusId,
+    shadow: { enabled: true, color: cssVar('--glow'), size: POSTER ? 26 : 16 },
+    font: { color: cssVar('--ink-strong'), size: POSTER ? (LITE ? 44 : 30) : 15, bold: true } }]);
+  nodes.update([...neighborIds].filter(id => id !== focusId).map(id => ({ id,
+    shadow: { enabled: true, color: cssVar('--glow-2'), size: POSTER ? 14 : 8 } })));
+}
+if (focusId) paintFocus();
+themeListeners.push(paintGraph);
+
+// 布局稳定后：焦点机位聚焦目标，否则铺满画布（海报截图需要完整构图）
+net.once('stabilizationIterationsDone', () => {
+  if (focusId) {
+    net.focus(focusId, { scale: BOOK ? 1.25 : 0.85, animation: false });
+    if (BOOK) showPanel(focusId);
+    // focus 到带卡主题枢纽时直接弹卡（海报模式保持画面干净不弹）
+    else if (!POSTER && nodes.get(focusId)._raw.card) showPanel(focusId);
+  } else {
+    net.fit({ animation: false });
+  }
+});
+
+// 点击节点 → 右侧详情（panel 与 mdMini 已在上方与 universe 皮肤共用处定义）
+function showPanel(id) {
+  const escapeText = s => String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  const n = nodes.get(id)._raw;
+  // 主题枢纽带整张主题卡，宽面板渲染
+  if (n.card) {
+    panel.style.width = POSTER ? '' : '560px';
+    panel.innerHTML = `<span class="close" onclick="panel.style.display='none';panel.style.width=''">✕</span>
+      <h3>⭐ ${escapeText(n.label)}</h3>
+      <div class="meta">${escapeText(n.category || '主题')}枢纽 · ${n.mentions} 本书</div>
+      <div class="mdcard">${mdMini(n.card)}</div>`;
+    panel.style.display = 'block';
+    return;
+  }
+  panel.style.width = '';
+  const rel = G.edges.filter(e => e.from === n.id || e.to === n.id)
+    .map(e => {
+      const other = nodes.get(e.from === n.id ? e.to : e.from);
+      return `<div class="edge"><span class="to">${escapeText(other.label)}</span><br>${escapeText(e.title).replace(/\n/g, '<br>')}</div>`;
+    }).join('');
+  panel.innerHTML = `<span class="close" onclick="panel.style.display='none'">✕</span>
+    <h3>${escapeText(n.label)}</h3>
+    <div class="meta">${escapeText(n.author)}</div>
+    ${rel}`;
+  panel.style.display = 'block';
+}
+net.on('click', p => {
+  if (!p.nodes.length) { panel.style.display = 'none'; return; }
+  showPanel(p.nodes[0]);
+});
+
+// 搜索高亮
+document.getElementById('search').addEventListener('input', ev => {
+  const q = ev.target.value.trim();
+  if (!q) { net.unselectAll(); return; }
+  const hit = allNodes.filter(n => n.label.includes(q)).map(n => n.id);
+  if (hit.length) { net.selectNodes(hit); net.focus(hit[0], { scale: 1.1, animation: true }); }
+});
+
+// 只看在库连线
+document.getElementById('onlyInternal').addEventListener('change', ev => {
+  const on = ev.target.checked;
+  edges.update(allEdges.map(e => ({ id: e.id, hidden: on && !e._internal })));
+  nodes.update(allNodes.map(n => ({ id: n.id,
+    hidden: on && n.group !== 'book' })));
+});
+
+// 主题层开关（与"只看在库"独立）
+document.getElementById('themeLayer').addEventListener('change', ev => {
+  const off = !ev.target.checked;
+  edges.update(allEdges.filter(e => e._theme).map(e => ({ id: e.id, hidden: off })));
+  nodes.update(allNodes.filter(n => n.group === 'theme').map(n => ({ id: n.id, hidden: off })));
+});
+} else {
+  // universe 皮肤：顺序加载宇宙数据 + 独立 canvas 渲染层，面板回调复用上面的 panel/mdMini
+  const escHtml = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  const load = src => new Promise((ok, fail) => {
+    const el = document.createElement('script');
+    el.src = src; el.onload = ok;
+    el.onerror = () => fail(new Error(src + ' 加载失败（先跑 python build_universe.py）'));
+    document.head.appendChild(el);
+  });
+  (window.UNIVERSE ? Promise.resolve() : load('universe_data.js')).then(() => load('universe.js')).then(() => initUniverse({
+    onBook(b) { // 恒星/彗星 → 书卡
+      panel.style.width = '';
+      const tagHtml = b.tags.map(t =>
+        `<span class="tagchip">${escHtml(t)}</span>`).join('');
+      panel.innerHTML = `<span class="close" onclick="panel.style.display='none'">✕</span>
+        <h3>${b.comet ? '☄ ' : '⭐ '}${escHtml(b.title)}</h3>
+        <div class="meta">${escHtml(b.author || '')}</div>
+        <div class="meta">阅读 ${(b.rt / 3600).toFixed(1)} 小时 · 笔记 ${b.notes} 条${b.comet ? ' · 主题离群书' : ''}</div>
+        <div>${tagHtml}</div>
+        <div class="meta" style="margin-top:6px">所属星系：✦ ${escHtml(b.theme)}</div>`;
+      panel.style.display = 'block';
+    },
+    onTheme(g) { // 星系 → 主题卡（沿用主题卡渲染机制）
+      panel.style.width = '560px';
+      panel.innerHTML = `<span class="close" onclick="panel.style.display='none';panel.style.width=''">✕</span>
+        <h3>✦ ${escHtml(g.name)} 星系</h3>
+        <div class="meta">${escHtml(g.category || '主题')}枢纽 · ${g.count} 本相关</div>
+        ${g.card ? `<div class="mdcard">${mdMini(g.card)}</div>` : ''}`;
+      panel.style.display = 'block';
+    },
+    onClose() { panel.style.display = 'none'; },
+  })).catch(err => {
+    document.getElementById('ustats').textContent = err.message;
+  });
+}
+</script>
+</body>
+</html>
