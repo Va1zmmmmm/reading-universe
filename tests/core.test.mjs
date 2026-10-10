@@ -2,6 +2,24 @@ import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {normalize,buildViews,publicProject,privatePackage,validateLinks,fingerprint,updateProject,candidatePairs} from '../web/core.mjs';
 import {makeZip,readZip} from '../web/zip.mjs';
+
+test('large highlight caches retain the complete reader review and card',()=>{
+  const highlights=Array.from({length:130},(_,i)=>({markText:`划线${i}`}));
+  const p=normalize({books:[{bookId:'many',title:'材料多的书',myReview:{content:'读者的未解问题'}}]},
+    {'highlights/many.json':JSON.stringify(highlights),'cards/many.md':'# 卡片\n\n人物的对白不能变成一般处方。'});
+  const evidence=p.books[0].evidence;
+  assert.equal(evidence.length,100);assert.equal(new Set(evidence.map(e=>e.id)).size,100);
+  assert.equal(evidence.find(e=>e.kind==='review').text,'读者的未解问题');
+  assert.equal(evidence.find(e=>e.kind==='card').text,'# 卡片\n\n人物的对白不能变成一般处方。');
+  assert.equal(privatePackage(p).books[0].evidence.find(e=>e.kind==='card').text,evidence.find(e=>e.kind==='card').text);
+});
+
+test('view counts distinguish complete books, finished books and missing cards',()=>{
+  const p=normalize({books:[{id:'card',title:'有卡',finishTime:'2026-01-01'},{id:'no-card',title:'留待整理',finishTime:'2026-02-01'},{id:'unread',title:'未读'}]}, {'cards/card.md':'# 读后卡'});
+  const stats=buildViews(p).graph.stats;
+  assert.equal(stats.books,3);assert.equal(stats.finished,2);assert.equal(stats.withoutCard,1);
+  assert.equal(buildViews(publicProject(p,['card'],{}).project).graph.stats.finished,0);
+});
 test('new user never inherits author tags/cards; untagged books stay visible',()=>{
   const a=normalize({books:[{id:'a',title:'A'}]},{'theme_tags.json':'{"a":{"tags":["主题A"]},"other":{"tags":["作者主题"]}}','themes/主题A.md':'卡A'});
   const b=normalize({books:[{id:'b',title:'B'}]});

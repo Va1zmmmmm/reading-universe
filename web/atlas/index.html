@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="zh-CN">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>页间 · 整理与探索</title><link rel="stylesheet" href="explore.css?v=1"><link rel="stylesheet" href="trail.css?v=1"><link rel="stylesheet" href="trail-story.css?v=2"><link rel="stylesheet" href="themes.css?v=1"><link rel="stylesheet" href="workspace.css?v=1"><link rel="stylesheet" href="compose.css?v=1"><link rel="stylesheet" href="../atlas-onboarding.css?v=1"></head>
+<body>
+  <header class="topbar"><button id="menu" class="icon-button" aria-label="展开来路">☰</button><button class="brand" id="project-home"><span class="brand-symbol">⌘</span>页间<span class="brand-note">从问题进入不同的书</span></button><div class="top-actions"><span id="project-status">还没有打开项目</span><button id="manage-project">书目与项目</button><button id="open-compose" disabled>＋ 整理新线索</button><button id="save-project" disabled>↓ 保存项目</button><button id="night" class="icon-button" aria-label="切换明暗">☾</button></div></header>
+  <section id="landing" class="landing">
+    <div class="landing-copy"><span class="eyebrow">从你的阅读开始</span><h1>一些划线，<br>会把你带往另一本书。</h1><p>把读过的书和留下的文字带进来。沿着问题读下去，遇到想再看的地方，留一句自己的想法。</p><div class="landing-actions"><button class="primary-action" id="first-import">打开我的项目或资料</button><button id="first-example">浏览作者公开案例 ↗</button></div><p class="local-hint">免注册 · 文件在浏览器里读取 · 下载项目包，下次接着看</p></div>
+    <aside class="landing-detail"><span>可以从哪里开始？</span><h2>已有线索，就沿着问题探索。</h2><p>打开保存过的探索项目，恢复来路、留下的线索和个人笔记。</p><h2>还只有书目，也可以先翻材料。</h2><p>导入书目与划线，按书或标签浏览。引入和衔接还未整理时，会明确停在材料层。</p><small>导入自己的材料后，可以选择片段、整理问题线索。先读草稿，再决定是否加入项目。</small></aside>
+  </section>
+  <section id="catalog" class="catalog" hidden><div class="catalog-head"><div><span class="eyebrow">你带来的阅读材料</span><h1 id="catalog-title"></h1><p id="catalog-description"></p></div><button id="resume">回到探索 ↗</button></div><div class="catalog-tools"><label>找一本书<input id="book-search" type="search" placeholder="书名或作者"></label><label>按标签翻<select id="tag-filter"><option value="">全部书目</option></select></label></div><div id="catalog-books"></div></section>
+  <div class="layout journey-layout" id="journey-layout" hidden>
+    <aside class="navigator" id="navigator" aria-label="探索来路与留下的线索">
+      <div id="route-heading" class="route-heading"></div><button id="home" class="home-button">↶ 回到本主题开场</button>
+      <div class="nav-label">已经发现的线索</div><nav id="walk" class="walk" aria-label="首次发现的线索，每处只列一次"></nav>
+      <div class="nav-label bag-label">留下来的线索<span id="pin-count"></span></div><nav id="bag" class="bag" aria-label="保留的线索"></nav>
+      <div class="local-actions"><button id="download">↓ 下载这次探索</button><button id="full-theme">查看本项目书目与材料 ↗</button><small>切换主题保留本页记录；离开前保存项目包</small></div>
+    </aside>
+    <main id="workspace">
+      <nav id="theme-switcher" class="theme-switcher" aria-label="选择探索主题"></nav>
+      <div class="context-bar"><button id="back" class="back-button" aria-label="返回上一步">←</button><nav id="trail" aria-label="当前位置"></nav><button id="open-reader">完整原文 ↗</button></div>
+      <div class="main-heading"><div><span id="entry" class="eyebrow"></span><h1 id="theme-title"></h1><p id="opening"></p></div></div>
+      <section id="story" class="story-focus" aria-label="当前这段在讲什么"></section>
+      <section id="choices" class="continue-choices" aria-label="接下来想看哪个问题"></section>
+      <details id="grown-map" class="grown-map"><summary><span>这一路的线索地图</span><span id="discovery-status" aria-live="polite"></span></summary>
+        <div class="map-status"><span>实线：走过的连接 · 虚线：还可以追</span><span>拖动空白处移动</span></div>
+        <section id="map-scroll" class="journey-map" tabindex="0" aria-label="逐步生长的线索地图，可左右移动"><div id="map-inner"><svg id="connections" aria-hidden="true"></svg><div id="columns"></div></div></section>
+      </details>
+      <div class="journey-footer"><p>这些段落来自不同位置，按问题放在一起读。你可以停留、回头，带着疑问离开。</p><button id="fit-current">看看我走到哪里了 ⤴</button></div>
+    </main>
+    <aside id="reader" class="reader" aria-label="完整原文、来处材料与个人笔记"></aside>
+  </div><div id="notice" role="status" aria-live="polite" hidden></div>
+  <dialog id="project-dialog" class="project-dialog"><div class="dialog-head"><h2>打开一份阅读项目</h2><button id="close-project" aria-label="关闭项目面板">×</button></div><p>文件只在当前浏览器里读取，不上传。重新打开保存的探索项目，可以接着上次的来路读。</p><div class="import-options"><button id="choose-files" class="primary-action">选择项目 JSON 或资料 ZIP</button><button id="choose-folder">选择资料文件夹</button></div><p class="import-help">支持探索项目包、正式工具的私人项目，以及含 books.json 与 highlights 的读书资料。一次打开一份项目，合计不超过 20 MB。</p><p class="import-help">本页保存书目、带入材料、问题线索和探索笔记。导入旧项目时，请保留原文件：已定义的旧关联、修订、设置和阅读指标也会保留。</p><p id="replace-hint" hidden>打开另一份项目会替换本页内容。当前记录尚未保存时，请先下载项目包。</p><p id="import-error" role="alert" hidden></p><hr><button id="load-example">加载作者公开案例</button><small>仅含已经公开的书目与主题，不加载作者私人原文。与你的项目分开打开。</small><input id="import-files" type="file" accept=".json,.zip,.md" multiple hidden><input id="import-folder" type="file" webkitdirectory multiple hidden></dialog>
+  <dialog id="book-dialog" class="book-dialog"><div class="dialog-head"><h2>书中留下的文字</h2><button id="close-book" aria-label="关闭书籍材料">×</button></div><div id="book-materials"></div></dialog>
+
+  <dialog id="compose-dialog" class="compose-dialog">
+    <div class="dialog-head"><h2>把材料整理成一条线索</h2><button id="close-compose" aria-label="关闭线索整理">×</button></div>
+    <p class="compose-intro">先选一个想追问的方向，再挑几段相关的文字。模型会整理引入、并读与不同的去路；你先读草稿，觉得讲得顺，再把它加入项目。</p>
+    <div id="compose-form">
+      <div class="compose-fields"><label>这条线索叫什么<input id="compose-name" maxlength="60" placeholder="例如：记忆、自由、与他人的距离"></label><label>想从什么疑问出发？<span>可留空</span><input id="compose-question" maxlength="300" placeholder="例如：留下的记录，能不能帮我们理解一个人？"></label></div>
+      <div class="material-tools"><label>按标签找材料<select id="compose-tag"><option value="">全部有材料的书</option></select></label><label>找一本书<input id="compose-search" type="search" placeholder="书名或作者"></label><label>材料类型<select id="compose-kind"><option value="">全部材料</option><option value="highlight">划线</option><option value="review">本人书评</option><option value="card">读书卡</option><option value="note">笔记与批注</option></select></label></div><p class="material-hint">勾选内容才会提交。长材料先取前1500字；可以在文本框里改选同一材料中的完整片段。</p>
+      <div id="compose-materials"></div>
+      <p id="selection-count" role="status"></p>
+      <div id="selected-materials" class="selected-materials" aria-label="本次提交的全部已选材料"></div>
+      <details class="compose-connection"><summary>本次使用的 AI 服务</summary><div class="compose-fields"><label>服务商<select id="compose-provider"><option value="deepseek">DeepSeek</option><option value="openai">OpenAI</option></select></label><label>模型名<input id="compose-model" maxlength="100" placeholder="填写你可使用的模型名" autocomplete="off"></label><label>你的 API key<input id="compose-key" type="password" autocomplete="off" maxlength="512" placeholder="仅本次使用，不保存"></label></div></details>
+      <p class="send-scope">点击整理后，勾选片段、所选书名/作者与这个问题会通过临时服务发给所选 AI 服务商；其余材料不发送。key 不写入项目或日志，用完清理。一次任务，遇到限流/网络故障最多调用两次，费用由你的服务商收取。</p>
+      <button id="generate-trail" class="primary-action">整理成问题线索</button>
+    </div>
+    <section id="compose-progress" hidden aria-live="polite"><p id="compose-progress-text">正在整理所选材料…</p><button id="cancel-trail">停止整理</button><small>已经发出的调用可能仍会计费；现有项目会保留。</small></section>
+    <p id="compose-error" role="alert" hidden></p>
+    <section id="draft-preview" hidden><div class="draft-label">AI 整理草稿 · 引文已逐字核对，解释与衔接请自行审阅</div><h2 id="draft-title"></h2><p id="draft-opening"></p><div id="draft-story"></div><div id="draft-choices"></div><div class="draft-actions"><button id="accept-trail" class="primary-action">加入项目，开始探索</button><button id="revise-trail">重新选材料</button></div><p>加入后会新增一条线索；你原来的主题、来路和笔记都保留。记得下载项目包。</p></section>
+  </dialog>
+<script type="module" src="compose.js?v=1"></script>
+<script type="module" src="../project-actions.mjs"></script>
+<script type="module" src="../atlas-onboarding.mjs?v=1"></script>
+</body>
+</html>

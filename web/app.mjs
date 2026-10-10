@@ -2,6 +2,7 @@ import {emptyProject,normalize,buildViews,themeCards,tagsFor,validateAnalysis,va
 import {readZip,makeZip} from './zip.mjs';
 const $=id=>document.getElementById(id);
 let project=emptyProject(),mode='graph',running=false,aborted=false,currentJob=null,preview=null,isExample=false,taskLimit=60,tasksUsed=0,stopReason='';
+let atlasWindow=null,atlasSnapshot='',atlasToken=null;
 const notice=message=>{$('notice').textContent=message;};
 function download(blob,name){const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),3000);}
 function jsonDownload(value,name){download(new Blob([JSON.stringify(value,null,2)],{type:'application/json'}),name);}
@@ -19,7 +20,7 @@ async function loadFiles(selected) {
     files[name]=await file.text();
   }
   const candidates=Object.entries(files).filter(([name])=>name.endsWith('.json')).map(([name,content])=>{try{return[name,JSON.parse(content)];}catch{throw Error(`JSON 无法读取：${name}`);}});
-  const restored=candidates.filter(([,v])=>v.format==='reading-universe-private');
+  const restored=candidates.filter(([,v])=>['reading-universe-private','reading-atlas-workspace'].includes(v.format));
   const bookFiles=candidates.filter(([name,v])=>name.split('/').at(-1)==='books.json'&&Array.isArray(v.books));
   const primary=restored.length?restored:bookFiles.length?bookFiles:candidates.filter(([,v])=>Array.isArray(v.books));
   if(primary.length!==1)throw Error(primary.length?'找到多份书目或项目包，请只选择一个人的一份数据。':'没有找到 books.json 或私人项目包。');
@@ -55,6 +56,19 @@ $('edit-tags').onclick=guard(async()=>{const id=$('book-select').value;project.e
 $('edit-card').onclick=guard(async()=>{const theme=$('card-select').value;if(!theme)return;project.edits.cards[theme]=$('card-text').value.slice(0,20000);preview=null;render();notice('主题卡修改已保留，重新生成不会覆盖。');});
 $('add-link').onclick=guard(async()=>{const source=$('book-select').value,target=$('link-target').value,reason=$('link-reason').value.trim();if(source===target||!reason)throw Error('请选择另一本书，并填写关联理由。');project.edits.links=validateLinks([...project.edits.links,{source,target,targetType:'book',type:$('link-type').value,reason,evidenceIds:[],basis:'manual'}],project,true);preview=null;render();notice('已保存本人确认的关联。');});
 $('save').onclick=guard(async()=>{jsonDownload(privatePackage(project),'我的阅读宇宙-私人项目.json');notice('私人项目包已下载。不含 API key；请把它保存在私人位置。');});
+const exploreButton=document.createElement('button');exploreButton.id='open-atlas';exploreButton.textContent='从问题探索';$('save').before(exploreButton);
+exploreButton.onclick=guard(async()=>{if(running)throw Error('请先取消当前生成，再进入探索。');atlasSnapshot=JSON.stringify(privatePackage(project));atlasToken=crypto.randomUUID();atlasWindow=window.open('atlas/index.html','reading-atlas');if(!atlasWindow)throw Error('浏览器未打开探索页。可以保存项目，再在探索入口打开。');});
+window.addEventListener('message',event=>{
+  if(event.origin!==location.origin||event.source!==atlasWindow||!atlasWindow)return;
+  if(event.data?.type==='reading-atlas-ready')atlasWindow.postMessage({type:'reading-atlas-load',token:atlasToken,project:JSON.parse(atlasSnapshot)},location.origin);
+  if(event.data?.type==='reading-atlas-return'&&event.data.token===atlasToken){
+    try{
+      if(running||JSON.stringify(privatePackage(project))!==atlasSnapshot)throw Error('图谱项目已变化，未覆盖。请先保存两边项目。');
+      const next=normalize(event.data.project);project=next;atlasSnapshot=JSON.stringify(privatePackage(next));preview=null;isExample=false;render();notice('探索线索与笔记已带回，原有关联和修订保留；记得保存私人项目。');
+      atlasWindow.postMessage({type:'reading-atlas-result',token:atlasToken,ok:true},location.origin);
+    }catch(e){notice(e.message||'探索项目无法带回，当前项目保留。');atlasWindow.postMessage({type:'reading-atlas-result',token:atlasToken,ok:false},location.origin);}
+  }
+});
 $('provider').onchange=()=>{$('model').value=$('provider').value==='deepseek'?'deepseek-chat':'gpt-4.1-mini';};
 const progress=(percent,message)=>{$('progress').hidden=false;$('progress').querySelector('progress').value=percent;$('progress').querySelector('span').textContent=message;};
 async function api(path,options={}){const response=await fetch(path,{...options,headers:{'Content-Type':'application/json',...options.headers}});const body=await response.json();if(!response.ok)throw Error(body.error||'服务暂不可用。');return body;}
@@ -74,7 +88,7 @@ $('generate').onclick=guard(async()=>{
   const credentials={provider:$('provider').value,model:$('model').value.trim(),key:$('key').value.trim()};
   project.settings.wordlist=[...new Set($('wordlist').value.split(/[,，]/).map(t=>t.trim()).filter(t=>t&&!['__proto__','constructor','prototype'].includes(t)))].slice(0,100);
   project.settings.aliases={};for(const line of $('aliases').value.split('\n')){const [a,b]=line.split('=').map(v=>v.trim());if(a&&b&&a.length<=60&&b.length<=60&&!['__proto__','constructor','prototype'].includes(a)&&!['__proto__','constructor','prototype'].includes(b))project.settings.aliases[a]=b;}
-  const todo=[];for(const b of project.books){const hash=await fingerprint(b,project.settings,credentials.model+'@'+credentials.provider);if(project.analysis[b.id]?.fingerprint!==hash)todo.push([b,hash]);}
+  const todo=[];for(const b of project.books.filter(b=>b.included!==false)){const hash=await fingerprint(b,project.settings,credentials.model+'@'+credentials.provider);if(project.analysis[b.id]?.fingerprint!==hash)todo.push([b,hash]);}
   running=true;aborted=false;stopReason='';tasksUsed=0;taskLimit=Math.max(1,Math.min(300,Number($('task-budget').value)||60));$('generate').disabled=true;$('cancel').hidden=false;$('save').disabled=true;$('key').value='';
   notice(`待分析 ${todo.length} 本，书目分析约 ${Math.ceil(todo.length/8)} 个任务，关联分析最多 7 个任务。每任务最多 2 次调用；本轮上限 ${taskLimit} 个任务。`);
   let failures=[];
@@ -89,7 +103,7 @@ $('generate').onclick=guard(async()=>{
   }finally{credentials.key='';running=false;$('generate').disabled=false;$('cancel').hidden=true;$('save').disabled=false;}
 });
 $('cancel').onclick=guard(async()=>{aborted=true;if(currentJob)await api('/api/jobs/'+currentJob,{method:'DELETE'}).catch(()=>{});notice('已请求取消；已经发出的 AI 调用可能仍会计费。');});
-$('share').onclick=()=>{const container=$('share-books');container.replaceChildren();for(const b of project.books){const l=document.createElement('label'),check=document.createElement('input');check.type='checkbox';check.value=b.id;check.checked=true;l.append(check,document.createTextNode(b.title));container.append(l);}$('sharing').hidden=false;$('sharing').scrollIntoView({behavior:'smooth'});};
+$('share').onclick=()=>{const container=$('share-books');container.replaceChildren();for(const b of project.books.filter(b=>b.included!==false)){const l=document.createElement('label'),check=document.createElement('input');check.type='checkbox';check.value=b.id;check.checked=true;l.append(check,document.createTextNode(b.title));container.append(l);}$('sharing').hidden=false;$('sharing').scrollIntoView({behavior:'smooth'});};
 for(const [id,value]of [['select-all',true],['select-none',false]])$(id).onclick=()=>{for(const input of $('share-books').querySelectorAll('input'))input.checked=value;};
 function selectedPublic(){const selected=[...$('share-books').querySelectorAll('input:checked')].map(e=>e.value);if(!selected.length)throw Error('请至少选择一本要公开的书。');return publicProject(project,selected,{metrics:$('share-metrics').checked,relations:$('share-relations').checked});}
 $('preview-public').onclick=guard(async()=>{const result=selectedPublic();preview=result.project;showView();$('share-report').textContent=`预览 ${preview.books.length} 本，隐藏 ${result.report.excluded} 本。${result.report.notice}`;$('viewer').scrollIntoView({behavior:'smooth'});});

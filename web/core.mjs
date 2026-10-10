@@ -1,5 +1,12 @@
 // Pure project transformations shared by the browser, tests and offline tools.
 export const VERSION = 1;
+export {explorationRequest,validateExploration} from './exploration.mjs';
+import {coverUrl as atlasCover,normalizeProject as atlasProject,FORMAT as ATLAS_FORMAT} from './atlas-project.mjs';
+import {universeFields,validateAnalysis,validateLinks} from './universe-fields.mjs';
+export {validateAnalysis,validateLinks} from './universe-fields.mjs';
+export {normalizeProject as explorationProject} from './atlas-project.mjs';
+import {makePublicAtlas} from './atlas-sharing.mjs';
+export function publicExploration(p,selected,permissions){return makePublicAtlas(p,publicProject(p,selected).project.books,permissions);}
 const MAX_BOOKS = 1500, MAX_TEXT = 20000;
 export const text = (v, max = MAX_TEXT) => typeof v === 'string' ? v.slice(0, max) : '';
 const list = v => Array.isArray(v) ? v : [];
@@ -17,10 +24,13 @@ export function emptyProject() {
 }
 export function normalize(input, files = {}) {
   if (!input || typeof input !== 'object') throw Error('请选择包含 books 数组的书目文件。');
+  if(input.format===ATLAS_FORMAT){const atlas=atlasProject(input);input={...atlas,...atlas.universe,books:atlas.books.map(b=>({...b,tags:atlas.universe.bookTags[b.id]??b.tags})),format:'reading-universe-private'};}
   const restore = input.format === 'reading-universe-private';
   if (restore && input.version !== VERSION) throw Error('这个项目包版本暂不支持。');
   if (!Array.isArray(input.books) || input.books.length > MAX_BOOKS) throw Error(`书目应为数组，最多 ${MAX_BOOKS} 本。`);
   const p = emptyProject(), seen = new Set();
+  if(typeof input.name==='string')p.name=text(input.name,150);
+  let materialCount=0;
   p.books = input.books.filter(b=>!b.mergedInto).map((b, i) => {
     const id = String(b.id ?? b.bookId ?? '').trim(), title = text(b.title, 300).trim();
     if (!id || id.length>200 || /[|\u0000-\u001f]/.test(id) || !title || !safeName(id)) throw Error(`第 ${i+1} 本缺少有效 bookId/id 或 title。`);
@@ -28,11 +38,30 @@ export function normalize(input, files = {}) {
     seen.add(id);
     const evidence = [], add = (value, kind, source) => {
       const content = text(typeof value === 'string' ? value : value?.text || value?.markText || value?.content || value?.abstract).trim();
-      if (content && evidence.length < 100) evidence.push({id:`${id}:e${evidence.length}`, text:content, kind, source:text(source,500),included:true});
+      if (!content) return;
+      if (evidence.length < 100) evidence.push({id:`${id}:e${evidence.length}`, text:content, kind, source:text(source,500),included:true});
+      else if (kind === 'review' || kind === 'card') {
+        // A long highlight cache must not crowd out the reader's review/card.
+        // Replace only a sampled note/highlight, retaining unique evidence IDs.
+        const slot=evidence.findLastIndex(e=>e.kind!=='review'&&e.kind!=='card');
+        if(slot>=0)evidence[slot]={id:`${id}:e${slot}`,text:content,kind,source:text(source,500),included:true};
+      }
     };
-    if (restore) list(b.evidence).forEach((e, n) => {
-      if (text(e.text)) evidence.push({id:`${id}:e${n}`,text:text(e.text),kind:['highlight','note','card','review'].includes(e.kind)?e.kind:'note',source:text(e.source,500),included:e.included!==false});
-    });
+    if (restore) {
+      const rows=b.evidence??[];
+      if(!Array.isArray(rows)||rows.length>2000)throw Error('单书材料最多2000条，请保留原项目。');
+      const evidenceIds=new Set();
+      for(const [n,e]of rows.entries()){
+        const eid=e.id??`${id}:e${n}`;
+        if(typeof eid!=='string'||!eid||eid.length>250||/[|\u0000-\u001f]/.test(eid)||!safeName(eid)||evidenceIds.has(eid)||typeof e.text!=='string'||!e.text.trim()||e.text.length>100000)throw Error('材料标识重复、文字缺失或超过限制。');
+        evidenceIds.add(eid);const out={id:eid,text:e.text,kind:['highlight','note','card','review'].includes(e.kind)?e.kind:'note',source:text(e.source,500),included:e.included!==false};
+        if(e.sourceLocator&&typeof e.sourceLocator==='object'){
+          out.sourceLocator={};if(Number.isSafeInteger(e.sourceLocator.ordinal)&&e.sourceLocator.ordinal>0)out.sourceLocator.ordinal=e.sourceLocator.ordinal;
+          if(typeof e.sourceLocator.bookmarkId==='string')out.sourceLocator.bookmarkId=text(e.sourceLocator.bookmarkId,200);
+        }
+        evidence.push(out);
+      }
+    }
     else {
       list(b.highlights).forEach(e=>add(e,'highlight','书目内划线'));
       list(b.annotations).forEach(e=>add(e,'note','书目内笔记'));
@@ -43,20 +72,13 @@ export function normalize(input, files = {}) {
       for(const [name,content]of Object.entries(files))if(name.endsWith(`/notes/${id}.md`)||name===`notes/${id}.md`)add(content,'note',name);
       for (const [name, content] of Object.entries(files)) if (name.endsWith(`/cards/${id}.md`) || name===`cards/${id}.md`) add(content,'card',name);
     }
-    return {id,title,author:text(b.author,300),readingTime:numeric(b.readingTime),notes:numeric(typeof b.notes==='object'?b.notes?.total:b.notes),finished:Boolean(b.finished ?? b.finishTime),finishTime:text(String(b.finishTime || ''),80),rating:text(String(b.rating ?? b.affectionScore ?? ''),80),evidence};
+    materialCount+=evidence.length;if(materialCount>100000)throw Error('材料数量超过限制，请保留原项目。');
+    return {id,title,author:text(b.author,300),included:b.included!==false,cover:atlasCover(b.cover),tags:unique(list(b.tags).map(v=>text(v,100)).filter(v=>v&&safeName(v))).slice(0,100),readingTime:numeric(b.readingTime),notes:numeric(typeof b.notes==='object'?b.notes?.total:b.notes),finished:Boolean(b.finished ?? b.finishTime),finishTime:text(String(b.finishTime || ''),80),rating:text(String(b.rating ?? b.affectionScore ?? ''),80),evidence};
   });
   p.settings.wordlist = unique(list(input.settings?.wordlist).map(t=>text(t,60).trim()).filter(t=>t&&safeName(t))).slice(0,100);
   for(const [alias,canonical]of Object.entries(input.settings?.aliases||{}))if(safeName(alias)&&typeof canonical==='string'&&canonical.length<=60&&safeName(canonical))p.settings.aliases[text(alias,60)]=canonical;
   if (restore) {
-    for (const b of p.books) if (input.analysis?.[b.id]) p.analysis[b.id] = validateAnalysis(input.analysis[b.id],b,p.settings.wordlist);
-    p.links = validateLinks(input.links,p);
-    for (const [name,card] of Object.entries(input.cards || {})) if(safeName(name))p.cards[text(name,60)] = text(card);
-    // Only editable fields are restored. Secrets and server credentials are never retained.
-    for (const b of p.books) if (input.edits?.books?.[b.id]) p.edits.books[b.id] = {tags:unique(list(input.edits.books[b.id].tags).map(t=>text(t,60)).filter(Boolean)).slice(0,10)};
-    for (const [name,card] of Object.entries(input.edits?.cards || {})) if(safeName(name))p.edits.cards[text(name,60)] = text(card);
-    p.edits.links = validateLinks(input.edits?.links,p,true);
-    p.edits.removedPairs=list(input.edits?.removedPairs).filter(k=>typeof k==='string'&&k.split('|').every(id=>seen.has(id))).slice(0,5000);
-    for(const [key,value]of Object.entries(input.linkCache||{}))if(key.split('|').every(id=>seen.has(id))&&typeof value==='string'&&value.length<300)p.linkCache[key]=value;
+    Object.assign(p,universeFields(input,p.books));
   } else {
     // Legacy author/agent data is imported only when it belongs to the current IDs.
     const tagsFile = Object.entries(files).find(([name])=>name.endsWith('theme_tags.json'));
@@ -88,6 +110,10 @@ export function normalize(input, files = {}) {
     }
     p.links=validateLinks(p.links,p,true);
   }
+  if(input.exploration!=null||input.journey!=null){
+    const atlas=atlasProject({...p,exploration:input.exploration,journey:input.journey});
+    p.exploration=atlas.exploration;p.journey=atlas.journey;
+  }
   return p;
 }
 export async function fingerprint(b, settings, model) {
@@ -95,22 +121,7 @@ export async function fingerprint(b, settings, model) {
   const hash=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(value));
   return Array.from(new Uint8Array(hash),x=>x.toString(16).padStart(2,'0')).join('');
 }
-export function validateAnalysis(a,b,wordlist=[]) {
-  const valid=new Set(b.evidence.map(e=>e.id));
-  const evidenceIds=unique(list(a.evidenceIds).filter(id=>valid.has(id)));
-  return {tags:unique(list(a.tags).map(t=>text(t,60).trim()).filter(t=>t&&safeName(t)&&(!wordlist.length||wordlist.includes(t)))).slice(0,8),summary:text(a.summary,2000),evidenceIds,basis:evidenceIds.length?'evidence':a.basis==='imported'?'imported':'inferred',fingerprint:text(a.fingerprint,100)};
-}
-export function validateLinks(rows,p,allowImported=false) {
-  const ids=new Set(p.books.map(b=>b.id)), evidence=new Map(p.books.flatMap(b=>b.evidence.map(e=>[e.id,b.id]))), seen=new Set();
-  return list(rows).filter(l=>{
-    if(!ids.has(l.source)||l.source===l.target)return false;
-    if(l.targetType==='book'&&!ids.has(l.target))return false;
-    const ev=list(l.evidenceIds).filter(e=>evidence.get(e)===l.source||evidence.get(e)===l.target);
-    if(!ev.length && !(allowImported||['manual','imported'].includes(l.basis)))return false;
-    const key=`${l.source}|${l.target}|${l.type}`;if(seen.has(key))return false;seen.add(key);return true;
-  }).map(l=>({source:l.source,target:text(String(l.target),300),targetType:['book','concept','external'].includes(l.targetType)?l.targetType:'book',type:['same_topic','complement','contrast','reference'].includes(l.type)?l.type:'same_topic',reason:text(l.reason,2000),evidenceIds:unique(list(l.evidenceIds).filter(e=>evidence.has(e))),basis:['manual','imported'].includes(l.basis)?l.basis:'evidence'}));
-}
-export function tagsFor(p,b) { return unique((p.edits.books[b.id]?.tags ?? p.analysis[b.id]?.tags ?? []).map(t=>p.settings.aliases?.[t]||t).filter(t=>t&&safeName(t))); }
+export function tagsFor(p,b) { return unique((p.edits.books[b.id]?.tags ?? p.analysis[b.id]?.tags ?? b.tags ?? []).map(t=>p.settings.aliases?.[t]||t).filter(t=>t&&safeName(t))); }
 export function tagCategory(p,tag) {
   if(p.books.some(b=>b.author===tag))return '作者';
   if(/^(华语|欧美|日本|韩国).*文学$/.test(tag))return '地域';
@@ -118,12 +129,14 @@ export function tagCategory(p,tag) {
   return '主题';
 }
 export function themeCards(p) {
+  p=visibleProject(p);
   const groups=Object.create(null);for(const b of p.books)for(const t of tagsFor(p,b))if(safeName(t))(groups[t]??=[]).push(b);
   const cards={};for(const [t,books]of Object.entries(groups)) {
     cards[t]=p.edits.cards[t] ?? p.cards[t] ?? `# ${t}\n\n- 相关书目：${books.length} 本\n${books.map(b=>`  - 《${b.title}》`).join('\n')}\n\n## 观点与问题\n${books.map(b=>`- 《${b.title}》：${p.analysis[b.id]?.summary||'尚无充分材料，等待补充。'}`).join('\n')}\n\n## 分歧与关联\n${[...p.links,...p.edits.links].filter(l=>books.some(b=>b.id===l.source)).map(l=>`- ${l.reason}`).join('\n')||'尚未确认具体关联。'}\n\n## 未解问题\n- 哪些判断仍需要更多材料或本人确认？`;
   }return cards;
 }
 export function buildViews(p) {
+  p=visibleProject(p);
   const cards=themeCards(p), nodes=p.books.map(b=>({id:`book:${b.id}`,label:b.title,group:'book',author:b.author,mentions:0})), edges=[], themes=[];
   for(const t of Object.keys(cards)) {
     const books=p.books.filter(b=>tagsFor(p,b).includes(t)),category=tagCategory(p,t);nodes.push({id:`theme:${t}`,label:t,group:'theme',category,mentions:books.length,card:cards[t]});themes.push({name:t,count:books.length,card:cards[t],category});
@@ -146,10 +159,11 @@ export function buildViews(p) {
   const rarity=b=>{const tags=[...b.tags].sort(),scores=[];for(let i=0;i<tags.length;i++)for(let j=i+1;j<tags.length;j++)scores.push((pairCounts.get(JSON.stringify([tags[i],tags[j]]))||0)/Math.sqrt((counts.get(tags[i])||1)*(counts.get(tags[j])||1)));return scores.reduce((s,n)=>s+n,0)/scores.length;};
   const tagged=books.filter(b=>b.tags.length>1).sort((a,b)=>rarity(a)-rarity(b));for(const b of tagged.slice(0,3))b.comet=1;
   for(const node of nodes)if(node.group==='book')node.mentions=edges.filter(e=>!e.theme&&(e.from===node.id||e.to===node.id)).length;
-  const stats={books:p.books.length,read:0,external:nodes.filter(n=>['concept','ext_book'].includes(n.group)).length,themes:Object.keys(cards).length,edges:edges.length};
+  const stats={books:p.books.length,read:0,finished:p.books.filter(b=>b.finished).length,withoutCard:p.books.filter(b=>b.finished&&!b.evidence.some(e=>e.kind==='card')).length,external:nodes.filter(n=>['concept','ext_book'].includes(n.group)).length,themes:Object.keys(cards).length,edges:edges.length};
   return {graph:{nodes,edges,stats},universe:{books,themes,stats:{books:books.length,themes:themes.length,comets:books.filter(b=>b.comet).length,totalHours:Math.round(books.reduce((s,b)=>s+b.rt,0)/3600),totalNotes:books.reduce((s,b)=>s+b.notes,0)}}};
 }
 export function publicProject(p, selected, options={}) {
+  selected=selected.filter(id=>p.books.some(b=>b.id===id&&b.included!==false));
   const chosen=new Set(selected), out=emptyProject(), rejected=[];
   // Free-form summaries/cards may refer to hidden books or personal events. Rebuild from allowed fields by default.
   out.books=p.books.filter(b=>chosen.has(b.id)).map(b=>({id:b.id,title:b.title,author:b.author,readingTime:options.metrics?b.readingTime:0,notes:options.metrics?b.notes:0,finished:false,finishTime:'',rating:'',evidence:[]}));
@@ -167,6 +181,10 @@ export function publicProject(p, selected, options={}) {
   }
   return {project:out,report:{excluded:p.books.length-out.books.length,rejected,notice:'专题卡由公开书目重建，未导出私人原文、自由文本、日期或评分。'}};
 }
+function visibleProject(p){
+  const books=p.books.filter(b=>b.included!==false),ids=new Set(books.map(b=>b.id)),valid=l=>ids.has(l.source)&&(l.targetType!=='book'||ids.has(l.target));
+  return {...p,books,links:p.links.filter(valid),edits:{...p.edits,links:p.edits.links.filter(valid)}};
+}
 export function privatePackage(p) { return normalize(p); }
 export function updateProject(previous,incoming) {
   // A current complete book list replaces the collection; retained IDs keep human work.
@@ -178,11 +196,16 @@ export function updateProject(previous,incoming) {
   const removedTitles=previous.books.filter(b=>!ids.has(b.id)).map(b=>b.title);
   p.cards={...Object.fromEntries(Object.entries(previous.cards).filter(([,c])=>!removedTitles.some(t=>c.includes(t)))),...p.cards};p.edits.cards={...previous.edits.cards};
   p.edits.removedPairs=previous.edits.removedPairs.filter(k=>k.split('|').every(id=>ids.has(id)));
-  p.linkCache=Object.fromEntries(Object.entries(previous.linkCache).filter(([k])=>k.split('|').every(id=>ids.has(id))));return p;
+  p.linkCache=Object.fromEntries(Object.entries(previous.linkCache).filter(([k])=>k.split('|').every(id=>ids.has(id))));
+  if(previous.exploration?.themes.length){
+    try{const atlas=atlasProject({...p,exploration:previous.exploration,journey:previous.journey});p.exploration=atlas.exploration;p.journey=atlas.journey;}
+    catch{throw Error('新书单改变了探索引用的材料。当前项目保留；请取消“最新完整书单”另开项目，或先整理受影响的线索。');}
+  }
+  return p;
 }
 export function candidatePairs(p,limit=40) {
   const pairs=[],seen=new Set([...p.links,...p.edits.links].filter(l=>l.targetType==='book').map(l=>[l.source,l.target].sort().join('|'))), buckets=new Map();
   for(const key of p.edits.removedPairs)seen.add(key);
   for(const [key,hash]of Object.entries(p.linkCache))if(hash===key.split('|').map(id=>p.analysis[id]?.fingerprint||'').join('|'))seen.add(key);
-  for(const b of p.books)if(b.evidence.length)for(const t of tagsFor(p,b)){const pool=buckets.get(t)||[];for(const other of pool.slice(-8)){const key=[other.id,b.id].sort().join('|');if(!seen.has(key)){seen.add(key);pairs.push([other,b]);if(pairs.length>=limit)return pairs;}}pool.push(b);buckets.set(t,pool);}return pairs;
+  for(const b of p.books)if(b.included!==false&&b.evidence.some(e=>e.included!==false))for(const t of tagsFor(p,b)){const pool=buckets.get(t)||[];for(const other of pool.slice(-8)){const key=[other.id,b.id].sort().join('|');if(!seen.has(key)){seen.add(key);pairs.push([other,b]);if(pairs.length>=limit)return pairs;}}pool.push(b);buckets.set(t,pool);}return pairs;
 }

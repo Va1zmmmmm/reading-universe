@@ -104,6 +104,14 @@
     padding: 2px 2px; font-size: 11px; letter-spacing: 2px; pointer-events: auto; }
   #usearch:focus { outline: none; border-bottom-color: var(--ink-3); }
   #usearch::placeholder { color: var(--ink-5); }
+  @media (max-width: 600px) {
+    body.universe #uhud { flex-direction: column; align-items: flex-start;
+      padding: 18px 20px; gap: 10px; letter-spacing: 1px; }
+    #uhud .brand { flex-shrink: 0; white-space: nowrap; letter-spacing: 5px; }
+    #uhud .brand span { margin-left: 8px; letter-spacing: 2px; }
+    #uhud .nav { width: 100%; line-height: 1.8; }
+    #ustats { display: block; }
+  }
   #utip { position: fixed; z-index: 3; pointer-events: none;
     background: var(--tip-bg); border: 1px solid var(--line);
     padding: 4px 10px; font-size: 11px; letter-spacing: 1px; color: var(--tip-ink);
@@ -205,10 +213,10 @@ if (POSTER) {
   document.body.classList.add('poster');
   if (LITE) document.body.classList.add('lite');
   document.getElementById('posterSub').textContent =
-    `阅读星野 · 读完 ${G.stats.books + (G.stats.read || 0)} 本 · 主题 ${G.stats.themes || 0} 个 · ${G.stats.edges} 条连线`;
+    `阅读星野 · 读完 ${G.stats.finished ?? (G.stats.books + (G.stats.read || 0))} 本 · 主题 ${G.stats.themes || 0} 个 · ${G.stats.edges} 条连线`;
 }
 document.getElementById('stats').textContent =
-  `${G.stats.books} 本书 · ${G.stats.read || 0} 本读完未蒸 · ${G.stats.external} 个外部节点 · ${G.stats.themes || 0} 个主题枢纽 · ${G.stats.edges} 条连线`;
+  `${G.stats.books} 本书 · ${G.stats.finished === undefined ? (G.stats.read || 0) + ' 本读完未蒸' : G.stats.finished + ' 本读完 · ' + G.stats.withoutCard + ' 本读完未有卡片'} · ${G.stats.external} 个外部节点 · ${G.stats.themes || 0} 个主题枢纽 · ${G.stats.edges} 条连线`;
 
 // 详情面板与迷你 md 渲染器：默认图谱与 universe 皮肤共用（mdMini 覆盖主题卡用到的结构：标题/列表/引用/粗体）
 const panel = document.getElementById('panel');

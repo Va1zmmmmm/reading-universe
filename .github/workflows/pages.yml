@@ -18,6 +18,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          # Keep read.va1z.xyz on its historical public edition. The full online
+          # tool has a backend and is deployed separately to atlas.va1z.xyz.
+          ref: 4118c16914765539814f849f8aee988ad98ea3c7
 
       - name: Set up Pages
         uses: actions/configure-pages@v5

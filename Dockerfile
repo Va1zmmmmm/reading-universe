@@ -1,6 +1,6 @@
 FROM python:3.12-slim
 WORKDIR /app
-COPY server.py /app/server.py
+COPY server.py exploration.py /app/
 COPY web /app/web
 RUN useradd --uid 10001 --create-home reading
 USER 10001

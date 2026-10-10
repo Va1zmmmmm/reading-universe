@@ -6,6 +6,7 @@ TLS reverse proxy with READING_ORIGINS=https://your-domain in production.
 from __future__ import annotations
 import argparse
 import http.cookies
+import importlib.util
 import json
 import os
 import secrets
@@ -20,6 +21,12 @@ from urllib.parse import urlsplit
 
 ROOT = Path(__file__).resolve().parent
 WEB = ROOT / 'web'
+_trail_spec=importlib.util.spec_from_file_location('reading_trail_contract',ROOT/'exploration.py')
+trail=importlib.util.module_from_spec(_trail_spec);_trail_spec.loader.exec_module(trail)
+PREVIEW = ROOT.parent.parent / 'design-preview'
+PREVIEW_ASSETS={'compose.html','compose.js','compose.css','workspace.html','workspace.js','workspace.css',
+                'workspace-core.mjs','universe-fields.mjs','workspace-zip.mjs','content-quality.js','explore.css','trail.css',
+                'trail-story.css','themes.css','themes-project.json','theme-branches.js','distance-story.js','distance-branch.js'}
 PROVIDERS = {'deepseek': 'https://api.deepseek.com/chat/completions',
              'openai': 'https://api.openai.com/v1/chat/completions'}
 TTL = 900
@@ -39,16 +46,27 @@ class NoRedirect(urllib.request.HTTPRedirectHandler):
         raise ValueError('redirect rejected')
 
 def call_model(provider, model, key, payload):
-    req = urllib.request.Request(PROVIDERS[provider], data=json.dumps({
-        'model': model, 'messages': [{'role':'system','content':PROMPT},
-                                    {'role':'user','content':json.dumps(payload, ensure_ascii=False)}],
-        'temperature':0.2, 'max_tokens':4000}).encode(), headers={
+    exploration=payload['stage']=='exploration'
+    body={'model': model, 'messages': [{'role':'system','content':trail.PROMPT if exploration else PROMPT},
+                                     {'role':'user','content':json.dumps(payload, ensure_ascii=False)}]}
+    if provider=='openai':body.update(max_completion_tokens=8192 if exploration else 4000,store=False)
+    else:body.update(temperature=0.2,max_tokens=8192 if exploration else 4000)
+    req = urllib.request.Request(PROVIDERS[provider], data=json.dumps(body).encode(), headers={
         'Content-Type':'application/json', 'Authorization':'Bearer '+key,
         'User-Agent':'reading-universe/2'})
-    with urllib.request.build_opener(NoRedirect).open(req, timeout=50) as response:
+    handlers=[NoRedirect]
+    proxy=os.environ.get('READING_OPENAI_PROXY','').strip() if provider=='openai' else ''
+    if proxy:
+        parsed=urlsplit(proxy)
+        if parsed.scheme!='http' or parsed.hostname not in ('127.0.0.1','localhost') or not parsed.port or parsed.username or parsed.password or parsed.path not in ('','/') or parsed.query or parsed.fragment:
+            raise ValueError('invalid administrator proxy')
+        handlers.append(urllib.request.ProxyHandler({'https':proxy}))
+    with urllib.request.build_opener(*handlers).open(req, timeout=90 if exploration else 50) as response:
         raw = response.read(1024 * 1024 + 1)
     if len(raw)>1024*1024: raise ValueError('response too large')
-    content=json.loads(raw)['choices'][0]['message']['content'].strip()
+    choice=json.loads(raw)['choices'][0]
+    if choice.get('finish_reason') in ('length','content_filter'):raise ValueError('incomplete response')
+    content=choice['message']['content'].strip()
     if content.startswith('```'): content='\n'.join(content.splitlines()[1:-1])
     result=json.loads(content)
     if not isinstance(result,dict): raise ValueError('invalid result')
@@ -63,7 +81,7 @@ def validate_payload(data):
     model=data.get('model','')
     if not isinstance(model,str) or not model or len(model)>100: raise ValueError('请填写模型名。')
     stage=data.get('stage')
-    if stage not in ('books','links'): raise ValueError('分析阶段无效。')
+    if stage not in ('books','links','exploration'): raise ValueError('分析阶段无效。')
     books=data.get('books')
     if not isinstance(books,list) or not 1<=len(books)<=80: raise ValueError('每个任务最多 80 本书。请分批生成。')
     clean=[]; seen=set();total_text=0
@@ -75,21 +93,28 @@ def validate_payload(data):
         seen.add(bid); evidence=[]
         ev=b.get('evidence',[])
         if not isinstance(ev,list) or len(ev)>12: raise ValueError('每本分析材料最多 12 个片段。')
+        evidence_ids=set()
         for e in ev:
             if not isinstance(e,dict) or not isinstance(e.get('id'),str) or not isinstance(e.get('text'),str): raise ValueError('材料格式无效。')
-            if len(e['text'])>1500 or len(e['id'])>250: raise ValueError('材料片段过长。')
+            if not e['id'] or e['id'] in evidence_ids or len(e['text'])>1500 or len(e['id'])>250: raise ValueError('材料片段过长或标识重复。')
+            evidence_ids.add(e['id'])
             total_text+=len(e['text'])
             if total_text>48000:raise ValueError('单任务分析片段总字数过多，请分批。')
-            evidence.append({'id':e['id'],'text':e['text']})
+            item={'id':e['id'],'text':e['text']}
+            if stage=='exploration':item['kind']=e.get('kind') if e.get('kind') in ('highlight','note','review','card') else 'note'
+            evidence.append(item)
         clean.append({'id':bid,'title':title,'author':str(b.get('author',''))[:300],'evidence':evidence})
     words=data.get('wordlist',[])
     if not isinstance(words,list) or len(words)>100 or any(not isinstance(w,str) or len(w)>60 for w in words): raise ValueError('主题词表无效。')
     pairs=data.get('pairs',[])
     if not isinstance(pairs,list) or len(pairs)>40 or any(not isinstance(p,list) or len(p)!=2 or any(x not in seen for x in p) for p in pairs): raise ValueError('候选关联无效。')
     if stage=='links' and not pairs: raise ValueError('没有可分析的候选关联。')
-    return provider,model,key,{'stage':stage,'books':clean,'wordlist':words,'pairs':pairs}
+    payload={'stage':stage,'books':clean,'wordlist':words,'pairs':pairs}
+    if stage=='exploration':payload['topic']=data.get('topic');payload=trail.validate_input(payload)
+    return provider,model,key,payload
 
 def sanitize_result(result,payload):
+    if payload['stage']=='exploration':return trail.sanitize(result,payload)
     by_id={b['id']:b for b in payload['books']}
     if payload['stage']=='books':
         rows=result.get('books')
@@ -165,6 +190,7 @@ class Jobs:
                 try:
                     job['attempts']+=1
                     result=sanitize_result(self.caller(job['provider'],job['model'],key,payload),payload)
+                    if key and key in json.dumps(result,ensure_ascii=False):raise ValueError('sensitive result rejected')
                     with self.lock:
                         if not job['cancel'].is_set():job.update(status='complete',progress=100,result=result)
                     return
@@ -177,7 +203,7 @@ class Jobs:
             # Provider response/error bodies may contain supplied key or private input.
             with self.lock:
                 if not job['cancel'].is_set():
-                    job['status']='failed';job['error']='AI 调用失败，请核对服务商、模型、key 和额度后重试。' if isinstance(exc,(urllib.error.HTTPError,urllib.error.URLError,TimeoutError)) else 'AI 返回的结构无法读取，请重试或导入已整理结果。'
+                    job['status']='failed';job['error']='AI 调用失败，请核对服务商、模型、key 和额度后重试。' if isinstance(exc,(urllib.error.HTTPError,urllib.error.URLError,TimeoutError)) else ('草稿未通过原材料与线索核对，未加入项目。请调整材料或重试。' if payload and payload['stage']=='exploration' else 'AI 返回的结构无法读取，请重试或导入已整理结果。')
         finally:
             with self.lock:job['key']='';job['payload']=None
             key='';payload=None
@@ -198,8 +224,9 @@ class Jobs:
 
 class Server(ThreadingHTTPServer):
     daemon_threads=True
-    def __init__(self,address,origins=(),jobs=None):
-        super().__init__(address,Handler);self.origins=set(origins);self.jobs=jobs or Jobs();self.sessions={};self.session_lock=threading.Lock()
+    def __init__(self,address,origins=(),jobs=None,explore_preview=False):
+        if explore_preview and address[0] not in ('127.0.0.1','localhost'):raise ValueError('私人探索预览只能监听本机。')
+        super().__init__(address,Handler);self.origins=set(origins);self.jobs=jobs or Jobs();self.sessions={};self.session_lock=threading.Lock();self.explore_preview=explore_preview
 
 class Handler(SimpleHTTPRequestHandler):
     def __init__(self,*args,**kwargs):super().__init__(*args,directory=str(WEB),**kwargs)
@@ -207,7 +234,8 @@ class Handler(SimpleHTTPRequestHandler):
         super().setup();self.connection.settimeout(15)
     def log_message(self,*args):pass
     def end_headers(self):
-        self.send_header('Cache-Control','no-store');self.send_header('X-Content-Type-Options','nosniff')
+        # Keep proxies from injecting analytics into a private reading workspace.
+        self.send_header('Cache-Control','no-store, no-transform');self.send_header('X-Content-Type-Options','nosniff')
         self.send_header('Referrer-Policy','no-referrer');self.send_header('X-Frame-Options','SAMEORIGIN')
         super().end_headers()
     def respond(self,status,value):
@@ -233,15 +261,22 @@ class Handler(SimpleHTTPRequestHandler):
         if not allowed:allowed={f'http://127.0.0.1:{self.server.server_port}',f'http://localhost:{self.server.server_port}'}
         return self.headers.get('Origin') in allowed and host in {urlsplit(o).netloc for o in allowed}
     def do_GET(self):
+        if self.server.explore_preview and self.headers.get('Host') not in {f'127.0.0.1:{self.server.server_port}',f'localhost:{self.server.server_port}'}:return self.respond(403,{'error':'本机预览地址无效。'})
         path=urlsplit(self.path).path
         if path=='/api/health':return self.respond(200,{'status':'ok','mode':'temporary-byok','version':2})
         if path=='/api/session':
             if not self.owner(True):return self.respond(503,{'error':'服务繁忙。'})
-            return self.respond(200,{'providers':list(PROVIDERS),'ttlSeconds':self.server.jobs.ttl,'maxBooksPerTask':80})
+            return self.respond(200,{'providers':list(PROVIDERS),'ttlSeconds':self.server.jobs.ttl,'maxBooksPerTask':80,'stages':['books','links','exploration']})
         if path.startswith('/api/jobs/'):
             value=self.server.jobs.get(path.rsplit('/',1)[-1],self.owner() or '')
             return self.respond(200,value) if value else self.respond(404,{'error':'任务不存在、已过期或无权访问。'})
         if path.startswith('/api/'):return self.respond(404,{'error':'接口不存在。'})
+        if path.startswith('/explore/'):
+            name=path.removeprefix('/explore/')
+            if not self.server.explore_preview or name not in PREVIEW_ASSETS:return self.respond(404,{'error':'文件不存在。'})
+            resolved=(PREVIEW/name).resolve()
+            if not resolved.is_relative_to(PREVIEW.resolve()) or not resolved.is_file():return self.respond(404,{'error':'文件不存在。'})
+            body=resolved.read_bytes();self.send_response(200);self.send_header('Content-Type',self.guess_type(str(resolved)));self.send_header('Content-Length',str(len(body)));self.end_headers();self.wfile.write(body);return
         if path.endswith('/'):self.path=path+'index.html'
         resolved=Path(self.translate_path(self.path)).resolve()
         if not resolved.is_relative_to(WEB.resolve()) or resolved.is_dir():return self.respond(404,{'error':'文件不存在。'})
@@ -266,9 +301,9 @@ class Handler(SimpleHTTPRequestHandler):
         return self.respond(404,{'error':'任务不存在或无权访问。'})
 
 def main():
-    ap=argparse.ArgumentParser();ap.add_argument('--host',default='127.0.0.1');ap.add_argument('--port',type=int,default=8766);args=ap.parse_args()
+    ap=argparse.ArgumentParser();ap.add_argument('--host',default='127.0.0.1');ap.add_argument('--port',type=int,default=8766);ap.add_argument('--explore-preview',action='store_true');args=ap.parse_args()
     origins=[s.strip() for s in os.environ.get('READING_ORIGINS','').split(',') if s.strip()]
-    server=Server((args.host,args.port),origins)
+    server=Server((args.host,args.port),origins,explore_preview=args.explore_preview)
     print(f'Reading Universe: http://{args.host}:{args.port} (temporary jobs; no persisted keys)',flush=True)
     try:server.serve_forever()
     finally:server.jobs.closed=True;server.server_close()
