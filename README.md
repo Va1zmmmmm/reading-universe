@@ -46,7 +46,7 @@ python server.py --port 8766
 
 打开 <http://127.0.0.1:8766/atlas/index.html> 是完整探索工具；`?demo=1` 打开试玩。<http://127.0.0.1:8766/> 是图谱与星空入口。普通克隆不需要作者工作库或任何私人素材。
 
-生产部署需要有效 HTTPS、同源 `/api/` 和 `READING_ORIGINS`。GitHub Pages 无法单独运行临时 AI 服务。原站 Pages 工作流仅手动触发，并固定使用历史公开版本；新工具独立部署，提交源码不会覆盖原站。详见 [部署](docs/DEPLOY.md) 和 [架构与边界](docs/ONLINE_ARCHITECTURE.md)。Docker 配置尚未实测。
+生产部署需要有效 HTTPS、同源 `/api/` 和 `READING_ORIGINS`。GitHub Pages 无法单独运行临时 AI 服务。原站 Pages 工作流仅手动触发，并固定使用历史公开版本；新工具独立部署，提交源码不会覆盖原站。详见 [部署](docs/DEPLOY.md) 和 [架构与边界](docs/ONLINE_ARCHITECTURE.md)。2026-10-11 已验证 Dockerfile 构建、普通用户只读运行、36 个前端资产与七项浏览器流程；容器验证没有调用真实 AI，也没有替换生产服务。
 
 ```bash
 python tools/package_deploy.py --out /path/to/reading-tool-deploy.zip

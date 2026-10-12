@@ -7,7 +7,7 @@
 1. 使用独立主机或容器平台；不要把用户资料放入公开目录，也不要默认暴露作者原服务器。
 2. 只部署 server.py、exploration.py 与 web/；用户 key 由页面临时提供，不设置作者密钥。无需 data/、邻接工作库或私有配置。探索入口为 `/atlas/index.html`；不要启用仅供本机私人对照的 `--explore-preview`。
 3. 配置 READING_ORIGINS=https://实际域名。前端与 /api/ 保持同域；反向代理设置 Host、X-Forwarded-Proto，使用有效 TLS 证书。
-4. Python 服务运行在普通账户；可参考 deploy/reading-universe.service 与 deploy/nginx.conf.example。Dockerfile 可用于独立容器平台；镜像构建及该生产配置本轮尚未实测。
+4. Python 服务运行在普通账户；可参考 deploy/reading-universe.service 与 deploy/nginx.conf.example。Dockerfile 已于 2026-10-11 在 Linux Docker 29.7.2 构建并验证：UID 10001、只读根目录、移除 capabilities、禁止提权，只绑定回环测试端口。36 个前端资产哈希、健康接口、私人路径 404 与七项浏览器流程通过。测试容器已移除；没有替换现有生产服务，也未验证容器内真实模型调用或高并发。
 5. 任务只在内存，15 分钟过期清理；每会话串行运行，全局 4 个分析线程。服务重启不会恢复任务或 key，用户已下载的项目包可恢复已完成内容。
 
 若主机无法直接连接 OpenAI，可仅为此服务设置 `READING_OPENAI_PROXY=http://127.0.0.1:代理端口`；只影响 OpenAI 请求，只接受管理员配置的本机 HTTP 代理。DeepSeek 保留直接连接。不设置全机代理，不修改其他项目的出口规则。
