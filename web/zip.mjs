@@ -5,22 +5,27 @@ const safe=name=>name.length<500&&!name.includes('\\')&&!name.startsWith('/')&&!
 export async function readZip(buffer) {
   const v=new DataView(buffer),bytes=new Uint8Array(buffer),decoder=new TextDecoder('utf-8',{fatal:true});
   if(buffer.byteLength>20*1024*1024)throw Error('压缩包不能超过 20 MB。');
-  let end=-1;for(let i=buffer.byteLength-22;i>=Math.max(0,buffer.byteLength-65557);i--)if(v.getUint32(i,true)===0x06054b50){end=i;break;}
+  let end=-1;for(let i=buffer.byteLength-22;i>=Math.max(0,buffer.byteLength-65557);i--)if(v.getUint32(i,true)===0x06054b50&&i+22+v.getUint16(i+20,true)===buffer.byteLength){end=i;break;}
   if(end<0)throw Error('压缩包格式不正确。');
   const count=v.getUint16(end+10,true);if(count>MAX_FILES||v.getUint16(end+4,true)||v.getUint16(end+6,true))throw Error('文件过多或不支持分卷压缩包。');
-  let offset=v.getUint32(end+16,true),total=0;const files={};
+  let offset=v.getUint32(end+16,true),total=0;const files={},directoryStart=offset,directoryEnd=offset+v.getUint32(end+12,true),ranges=[];
+  if(v.getUint16(end+8,true)!==count||directoryEnd!==end)throw Error('压缩包目录长度或条目数量不一致。');
   for(let n=0;n<count;n++) {
-    if(offset+46>buffer.byteLength||v.getUint32(offset,true)!==0x02014b50)throw Error('压缩包目录损坏。');
+    if(offset+46>directoryEnd||v.getUint32(offset,true)!==0x02014b50)throw Error('压缩包目录损坏。');
     const flags=v.getUint16(offset+8,true),method=v.getUint16(offset+10,true),crc=v.getUint32(offset+16,true),compressed=v.getUint32(offset+20,true),size=v.getUint32(offset+24,true),nl=v.getUint16(offset+28,true),el=v.getUint16(offset+30,true),cl=v.getUint16(offset+32,true),attrs=v.getUint32(offset+38,true),local=v.getUint32(offset+42,true);
+    if(offset+46+nl+el+cl>directoryEnd||v.getUint16(offset+34,true))throw Error('压缩包目录损坏或含分卷条目。');
     const name=decoder.decode(bytes.slice(offset+46,offset+46+nl));offset+=46+nl+el+cl;
     if(!safe(name)||((attrs>>>16)&0xf000)===0xa000||flags&1)throw Error('压缩包含不支持的路径、链接或加密文件。');
+    if(local+30>directoryStart||v.getUint32(local,true)!==0x04034b50)throw Error('压缩条目损坏。');
+    const localNameLength=v.getUint16(local+26,true),start=local+30+localNameLength+v.getUint16(local+28,true);
+    if(start+compressed>directoryStart||v.getUint16(local+6,true)!==flags||v.getUint16(local+8,true)!==method||decoder.decode(bytes.slice(local+30,local+30+localNameLength))!==name)throw Error('压缩条目与目录不一致。');
+    for(const [at,expected]of [[14,crc],[18,compressed],[22,size]])if(v.getUint32(local+at,true)!==expected&&(!(flags&8)||v.getUint32(local+at,true)!==0))throw Error('压缩条目大小或校验值不一致。');
+    if(ranges.some(([a,b])=>local<b&&start+compressed>a))throw Error('压缩条目重叠。');
+    ranges.push([local,start+compressed]);
     if(name.endsWith('/'))continue;
     if(!/\.(json|md)$/i.test(name))throw Error(`只接受 JSON 和 Markdown：${name}`);
     if(Object.hasOwn(files,name))throw Error('压缩包含重复文件。');
     total+=size;if(size>4*1024*1024||total>MAX_TOTAL||size>Math.max(1024*1024,compressed*150))throw Error('解压后的资料超过限制。');
-    if(local+30>buffer.byteLength||v.getUint32(local,true)!==0x04034b50)throw Error('压缩条目损坏。');
-    const start=local+30+v.getUint16(local+26,true)+v.getUint16(local+28,true);
-    if(start+compressed>buffer.byteLength)throw Error('压缩数据不完整。');
     let content=bytes.slice(start,start+compressed);
     if(method===8) {
       let stream;try{stream=new DecompressionStream('deflate-raw');}catch{throw Error('当前浏览器不支持这个压缩方式，请解压后选择文件夹内的 JSON/Markdown 文件。');}
@@ -31,6 +36,7 @@ export async function readZip(buffer) {
     if(content.length!==size||crc32(content)!==crc)throw Error('资料校验失败，文件可能损坏。');
     files[name]=decoder.decode(content);
   }
+  if(offset!==directoryEnd)throw Error('压缩包目录条目数量不一致。');
   return files;
 }
 export function makeZip(files) {
