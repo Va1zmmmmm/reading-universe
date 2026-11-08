@@ -4,7 +4,7 @@ import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 const repo=path.dirname(path.dirname(fileURLToPath(import.meta.url))),web=path.join(repo,'web'),preview=path.resolve(repo,'../../design-preview'),atlas=path.join(web,'atlas');
 await fs.access(path.join(preview,'compose.html'));await fs.mkdir(atlas,{recursive:true});
-for(const file of ['atlas-project.mjs','universe-fields.mjs'])await fs.copyFile(path.join(web,file),path.join(preview,file==='atlas-project.mjs'?'workspace-core.mjs':file));
+for(const file of ['atlas-project.mjs','universe-fields.mjs','zip.mjs'])await fs.copyFile(path.join(web,file),path.join(preview,file==='atlas-project.mjs'?'workspace-core.mjs':file==='zip.mjs'?'workspace-zip.mjs':file));
 for(const file of ['explore.css','trail.css','trail-story.css','themes.css','workspace.css','compose.css','compose.js','workspace-zip.mjs'])await fs.copyFile(path.join(preview,file),path.join(atlas,file));
 await fs.writeFile(path.join(atlas,'workspace-core.mjs'),"export * from '../atlas-project.mjs';\n");
 let html=await fs.readFile(path.join(preview,'compose.html'),'utf8');

@@ -1,8 +1,11 @@
 import {emptyProject,normalize,buildViews,themeCards,tagsFor,validateAnalysis,validateLinks,fingerprint,publicProject,privatePackage,candidatePairs,updateProject} from './core.mjs';
+import {own,cardText} from './universe-fields.mjs';
 import {readZip,makeZip} from './zip.mjs';
+import {createShareGate} from './share-operation.mjs';
 const $=id=>document.getElementById(id);
 let project=emptyProject(),mode='graph',running=false,aborted=false,currentJob=null,preview=null,isExample=false,taskLimit=60,tasksUsed=0,stopReason='';
 let atlasWindow=null,atlasSnapshot='',atlasToken=null;
+const shareGate=createShareGate();
 const notice=message=>{$('notice').textContent=message;};
 function download(blob,name){const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),3000);}
 function jsonDownload(value,name){download(new Blob([JSON.stringify(value,null,2)],{type:'application/json'}),name);}
@@ -39,6 +42,7 @@ function showView() {
 for(const id of ['graph','universe','poster'])$(id).onclick=()=>{mode=id;showView();};
 function fillSelect(el,rows,current){el.replaceChildren();for(const [value,label]of rows){const o=document.createElement('option');o.value=value;o.textContent=label;el.append(o);}if(rows.some(r=>r[0]===current))el.value=current;}
 function render(){
+  shareGate.invalidate('selection');
   $('workspace').hidden=!project.books.length;
   if(!project.books.length){$('viewer').src='about:blank';return;}
   const evidence=project.books.reduce((s,b)=>s+b.evidence.length,0),cards=themeCards(project);
@@ -48,12 +52,12 @@ function render(){
   const current=$('book-select').value;fillSelect($('book-select'),project.books.map(b=>[b.id,b.title]),current);fillSelect($('link-target'),project.books.map(b=>[b.id,b.title]),$('link-target').value);
   fillSelect($('card-select'),Object.keys(cards).map(t=>[t,t]),$('card-select').value);renderBook();renderCard();renderLinks();showView();
 }
-function renderBook(){const b=project.books.find(b=>b.id===$('book-select').value);if(!b)return;$('book-tags').value=tagsFor(project,b).join('，');const a=project.analysis[b.id];$('book-basis').textContent=project.edits.books[b.id]?'主题由本人修改；生成时保留。':a?.basis==='evidence'?`来自材料分析 · 证据 ${a.evidenceIds.length} 段`:a?.basis==='imported'?'来自已有整理；未回查原文。':a?'只有书名或未引用有效证据，结果属于推断。':'尚未分析。';$('evidence').replaceChildren();if(a?.summary){const p=document.createElement('p');p.textContent='整理结果：'+a.summary;$('evidence').append(p);}for(const e of b.evidence){const label=document.createElement('label'),check=document.createElement('input');check.type='checkbox';check.checked=e.included!==false;check.onchange=()=>{e.included=check.checked;};label.append(check,document.createTextNode('允许这个片段用于 AI 分析'));const p=document.createElement('p');p.textContent=`${e.kind} · ${e.id}\n${e.text}`;$('evidence').append(label,p);}}
+function renderBook(){const b=project.books.find(b=>b.id===$('book-select').value);if(!b)return;$('book-tags').value=tagsFor(project,b).join('，');const a=own(project.analysis,b.id);$('book-basis').textContent=own(project.edits.books,b.id)?'主题由本人修改；生成时保留。':a?.basis==='evidence'?`来自材料分析 · 证据 ${a.evidenceIds.length} 段`:a?.basis==='imported'?'来自已有整理；未回查原文。':a?'只有书名或未引用有效证据，结果属于推断。':'尚未分析。';$('evidence').replaceChildren();if(a?.summary){const p=document.createElement('p');p.textContent='整理结果：'+a.summary;$('evidence').append(p);}for(const e of b.evidence){const label=document.createElement('label'),check=document.createElement('input');check.type='checkbox';check.checked=e.included!==false;check.onchange=()=>{e.included=check.checked;};label.append(check,document.createTextNode('允许这个片段用于 AI 分析'));const p=document.createElement('p');p.textContent=`${e.kind} · ${e.id}\n${e.text}`;$('evidence').append(label,p);}}
 function renderCard(){$('card-text').value=themeCards(project)[$('card-select').value]||'';}
 function renderLinks(){const container=$('links-editor');container.replaceChildren();for(const [kind,rows]of [['generated',project.links],['manual',project.edits.links]])rows.forEach((l,index)=>{const row=document.createElement('div');row.className='link-row';const a=project.books.find(b=>b.id===l.source)?.title||l.source,b=project.books.find(b=>b.id===l.target)?.title||l.target;const desc=document.createElement('span');desc.textContent=`${a} → ${b}\n${l.reason}\n${l.basis==='manual'?'本人确认':l.basis==='imported'?'已有整理':'材料分析'} · ${(l.evidenceIds||[]).join('、')}`;const remove=document.createElement('button');remove.textContent='移除';remove.onclick=()=>{if(l.targetType==='book')project.edits.removedPairs.push([l.source,l.target].sort().join('|'));rows.splice(index,1);render();};row.append(desc,remove);container.append(row);});}
 $('book-select').onchange=renderBook;$('card-select').onchange=renderCard;
 $('edit-tags').onclick=guard(async()=>{const id=$('book-select').value;project.edits.books[id]={tags:[...new Set($('book-tags').value.split(/[,，]/).map(t=>t.trim()).filter(t=>t&&t.length<=60&&!['__proto__','constructor','prototype'].includes(t)))].slice(0,10)};preview=null;render();notice('主题修改已保留，请下载项目包保存。');});
-$('edit-card').onclick=guard(async()=>{const theme=$('card-select').value;if(!theme)return;project.edits.cards[theme]=$('card-text').value.slice(0,20000);preview=null;render();notice('主题卡修改已保留，重新生成不会覆盖。');});
+$('edit-card').onclick=guard(async()=>{const theme=$('card-select').value;if(!theme)return;project.edits.cards[theme]=cardText($('card-text').value);preview=null;render();notice('主题卡修改已保留，重新生成不会覆盖。');});
 $('add-link').onclick=guard(async()=>{const source=$('book-select').value,target=$('link-target').value,reason=$('link-reason').value.trim();if(source===target||!reason)throw Error('请选择另一本书，并填写关联理由。');project.edits.links=validateLinks([...project.edits.links,{source,target,targetType:'book',type:$('link-type').value,reason,evidenceIds:[],basis:'manual'}],project,true);preview=null;render();notice('已保存本人确认的关联。');});
 $('save').onclick=guard(async()=>{jsonDownload(privatePackage(project),'我的阅读宇宙-私人项目.json');notice('私人项目包已下载。不含 API key；请把它保存在私人位置。');});
 const exploreButton=document.createElement('button');exploreButton.id='open-atlas';exploreButton.textContent='从问题探索';$('save').before(exploreButton);
@@ -84,12 +88,15 @@ async function job(stage,books,credentials,pairs=[]){
   }finally{await api('/api/jobs/'+id,{method:'DELETE'}).catch(()=>{});if(currentJob===id)currentJob=null;}
 }
 $('generate').onclick=guard(async()=>{
-  if(running)return;if(!$('consent').checked)throw Error('请先确认你允许发送待分析片段。');if(!$('key').value.trim())throw Error('请填写你自己的 API key。');
+  if(running)return;
+  running=true; // 在第一次 await 之前占位：连续点击只允许一轮进入
+  try{
+  if(!$('consent').checked)throw Error('请先确认你允许发送待分析片段。');if(!$('key').value.trim())throw Error('请填写你自己的 API key。');
   const credentials={provider:$('provider').value,model:$('model').value.trim(),key:$('key').value.trim()};
   project.settings.wordlist=[...new Set($('wordlist').value.split(/[,，]/).map(t=>t.trim()).filter(t=>t&&!['__proto__','constructor','prototype'].includes(t)))].slice(0,100);
   project.settings.aliases={};for(const line of $('aliases').value.split('\n')){const [a,b]=line.split('=').map(v=>v.trim());if(a&&b&&a.length<=60&&b.length<=60&&!['__proto__','constructor','prototype'].includes(a)&&!['__proto__','constructor','prototype'].includes(b))project.settings.aliases[a]=b;}
   const todo=[];for(const b of project.books.filter(b=>b.included!==false)){const hash=await fingerprint(b,project.settings,credentials.model+'@'+credentials.provider);if(project.analysis[b.id]?.fingerprint!==hash)todo.push([b,hash]);}
-  running=true;aborted=false;stopReason='';tasksUsed=0;taskLimit=Math.max(1,Math.min(300,Number($('task-budget').value)||60));$('generate').disabled=true;$('cancel').hidden=false;$('save').disabled=true;$('key').value='';
+  running=false;aborted=false;stopReason='';tasksUsed=0;taskLimit=Math.max(1,Math.min(300,Number($('task-budget').value)||60));$('generate').disabled=true;$('cancel').hidden=false;$('save').disabled=true;$('key').value='';
   notice(`待分析 ${todo.length} 本，书目分析约 ${Math.ceil(todo.length/8)} 个任务，关联分析最多 7 个任务。每任务最多 2 次调用；本轮上限 ${taskLimit} 个任务。`);
   let failures=[];
   try{
@@ -100,26 +107,59 @@ $('generate').onclick=guard(async()=>{
     }
     if(!aborted){const pairs=candidatePairs(project);for(let i=0;i<pairs.length;i+=6){if(aborted)break;progress(75+Math.round(i/Math.max(pairs.length,1)*20),`正在核对关联 ${i+1}–${Math.min(i+6,pairs.length)} / ${pairs.length}`);const batch=pairs.slice(i,i+6),books=[...new Map(batch.flat().map(b=>[b.id,b])).values()];try{const result=await job('links',books,credentials,batch.map(([a,b])=>[a.id,b.id]));project.links=validateLinks([...project.links,...(result.links||[])],project,true);for(const pair of batch){const ids=pair.map(b=>b.id).sort();project.linkCache[ids.join('|')]=ids.map(id=>project.analysis[id]?.fingerprint||'').join('|');}}catch(e){if(!aborted)failures.push('关联批次 '+(i/6+1));}}}
     preview=null;render();progress(100,aborted?stopReason||'已取消，已完成结果保留。':failures.length?`部分完成：${failures.length} 项未完成。`:'生成完成。');notice(aborted?(stopReason||'生成已取消。')+' 请保存已完成的项目，再重新填写 key 续跑。':failures.length?`未完成：${failures.join('、')}。下载项目包保留成果，重新填写 key 可续跑。`:'主题与关联已生成。请检查依据、修订判断，再保存项目。');
-  }finally{credentials.key='';running=false;$('generate').disabled=false;$('cancel').hidden=true;$('save').disabled=false;}
+  }finally{credentials.key='';}
+  }finally{running=false;$('generate').disabled=false;$('cancel').hidden=true;$('save').disabled=false;}
 });
 $('cancel').onclick=guard(async()=>{aborted=true;if(currentJob)await api('/api/jobs/'+currentJob,{method:'DELETE'}).catch(()=>{});notice('已请求取消；已经发出的 AI 调用可能仍会计费。');});
-$('share').onclick=()=>{const container=$('share-books');container.replaceChildren();for(const b of project.books.filter(b=>b.included!==false)){const l=document.createElement('label'),check=document.createElement('input');check.type='checkbox';check.value=b.id;check.checked=true;l.append(check,document.createTextNode(b.title));container.append(l);}$('sharing').hidden=false;$('sharing').scrollIntoView({behavior:'smooth'});};
-for(const [id,value]of [['select-all',true],['select-none',false]])$(id).onclick=()=>{for(const input of $('share-books').querySelectorAll('input'))input.checked=value;};
+function invalidateShareState(reason='selection'){shareGate.invalidate(reason);preview=null;}
+$('share').onclick=()=>{invalidateShareState();showView();$('share-report').textContent='';const container=$('share-books');container.replaceChildren();for(const b of project.books.filter(b=>b.included!==false)){const l=document.createElement('label'),check=document.createElement('input');check.type='checkbox';check.value=b.id;check.checked=true;l.append(check,document.createTextNode(b.title));container.append(l);}$('sharing').hidden=false;$('sharing').scrollIntoView({behavior:'smooth'});};
+for(const [id,value]of [['select-all',true],['select-none',false]])$(id).onclick=()=>{for(const input of $('share-books').querySelectorAll('input'))input.checked=value;invalidateShareState();showView();$('share-report').textContent='公开范围已改变，请重新预览。';};
 function selectedPublic(){const selected=[...$('share-books').querySelectorAll('input:checked')].map(e=>e.value);if(!selected.length)throw Error('请至少选择一本要公开的书。');return publicProject(project,selected,{metrics:$('share-metrics').checked,relations:$('share-relations').checked});}
-$('preview-public').onclick=guard(async()=>{const result=selectedPublic();preview=result.project;showView();$('share-report').textContent=`预览 ${preview.books.length} 本，隐藏 ${result.report.excluded} 本。${result.report.notice}`;$('viewer').scrollIntoView({behavior:'smooth'});});
-$('close-share').onclick=()=>{preview=null;$('sharing').hidden=true;showView();};
-$('download-public').onclick=guard(async()=>{
-  const result=selectedPublic(),views=buildViews(result.project),files={};
-  for(const name of ['viewer.html','viewer-data.js','universe.js','lib/vis-network.min.js']){const response=await fetch(name);if(!response.ok)throw Error('公开包资源读取失败。');files[name==='viewer.html'?'index.html':name]=await response.text();}
+// Each operation gets a token. A newer operation, a selection change or a failure
+// invalidates older async work before it can download or overwrite the report.
+function discardStaleShare(token){
+  if(shareGate.isCurrent(token))return false;
+  if(shareGate.invalidatedBy==='selection'&&$('share-report').textContent==='公开范围已改变，请重新预览。')$('share-report').textContent='下载准备期间公开范围已改变，请按当前选择重新下载。';
+  return true;
+}
+function shareGuard(action){return async()=>{
+  const token=shareGate.begin();
+  try{await action(token);}
+  catch(e){
+    if(!shareGate.isCurrent(token))return;
+    shareGate.invalidate('failure');preview=null;showView();
+    $('share-report').textContent='未能生成公开内容：'+(e.message||'请调整公开范围后重试。');
+  }
+};}
+$('preview-public').onclick=shareGuard(async token=>{
+  const result=selectedPublic();if(!shareGate.isCurrent(token))return;
+  preview=result.project;showView();
+  if(!shareGate.isCurrent(token))return;
+  $('share-report').textContent=`预览 ${preview.books.length} 本，隐藏 ${result.report.excluded} 本。${result.report.notice}`;$('viewer').scrollIntoView({behavior:'smooth'});
+});
+$('close-share').onclick=()=>{invalidateShareState();$('sharing').hidden=true;showView();};
+for(const id of ['share-books','share-metrics','share-relations'])$(id).addEventListener('change',()=>{invalidateShareState();showView();$('share-report').textContent='公开范围已改变，请重新预览。';});
+$('download-public').onclick=shareGuard(async token=>{
+  const result=selectedPublic();if(!shareGate.isCurrent(token))return;
+  const views=buildViews(result.project),files={};
+  for(const name of ['viewer.html','viewer-data.js','universe.js','lib/vis-network.min.js']){
+    if(discardStaleShare(token))return;
+    const response=await fetch(name);if(discardStaleShare(token))return;if(!response.ok)throw Error('公开包资源读取失败。');
+    const content=await response.text();if(discardStaleShare(token))return;
+    files[name==='viewer.html'?'index.html':name]=content;
+  }
   // Escape script delimiters even though these are external data scripts.
   const safeJSON=v=>JSON.stringify(v).replace(/</g,'\\u003c');
   files['graph_data.js']='window.GRAPH = '+safeJSON(views.graph)+';';files['universe_data.js']='window.UNIVERSE = '+safeJSON(views.universe)+';';
   files['README.txt']='这是你选择分享的阅读版图。打开 index.html 看图谱，index.html?universe 看星空。上传整个目录即可静态托管。包内每个文件均可公开访问。';
-  download(makeZip(files),'我的阅读宇宙-公开网站.zip');$('share-report').textContent=result.report.notice+' '+result.report.rejected.join(' ');
+  if(discardStaleShare(token))return;
+  download(makeZip(files),'我的阅读宇宙-公开网站.zip');
+  if(discardStaleShare(token))return;
+  $('share-report').textContent=result.report.notice+' '+result.report.rejected.join(' ');
 });
-$('download-image').onclick=guard(async()=>{
-  const {project:p}=selectedPublic(),cards=themeCards(p),canvas=document.createElement('canvas');canvas.width=1080;canvas.height=1440;const ctx=canvas.getContext('2d');ctx.fillStyle='#0a0e15';ctx.fillRect(0,0,1080,1440);ctx.fillStyle='#e8b575';ctx.font='24px sans-serif';ctx.fillText('READING UNIVERSE',75,100);ctx.fillStyle='#edf0f5';ctx.font='58px serif';ctx.fillText('我的阅读宇宙',75,230);ctx.font='25px sans-serif';ctx.fillStyle='#9ca7b6';ctx.fillText(`${p.books.length} 本书 · ${Object.keys(cards).length} 个主题`,75,295);
-  const names=Object.keys(cards).slice(0,16);names.forEach((name,i)=>{const x=160+(i%4)*240,y=460+Math.floor(i/4)*220;ctx.fillStyle='#83aaff';ctx.beginPath();ctx.arc(x,y,5+Math.min(20,p.books.filter(b=>tagsFor(p,b).includes(name)).length),0,Math.PI*2);ctx.fill();ctx.font='22px sans-serif';ctx.fillStyle='#edf0f5';ctx.fillText(name.slice(0,10),x-65,y+60);});ctx.font='24px sans-serif';ctx.fillStyle='#9ca7b6';ctx.fillText('读过的书，在这里相遇。',75,1340);canvas.toBlob(blob=>download(blob,'我的阅读宇宙-分享.png'));
+$('download-image').onclick=shareGuard(async token=>{
+  const {project:p}=selectedPublic();if(!shareGate.isCurrent(token))return;const cards=themeCards(p),canvas=document.createElement('canvas');canvas.width=1080;canvas.height=1440;const ctx=canvas.getContext('2d');ctx.fillStyle='#0a0e15';ctx.fillRect(0,0,1080,1440);ctx.fillStyle='#e8b575';ctx.font='24px sans-serif';ctx.fillText('READING UNIVERSE',75,100);ctx.fillStyle='#edf0f5';ctx.font='58px serif';ctx.fillText('我的阅读宇宙',75,230);ctx.font='25px sans-serif';ctx.fillStyle='#9ca7b6';ctx.fillText(`${p.books.length} 本书 · ${Object.keys(cards).length} 个主题`,75,295);
+  const names=Object.keys(cards).slice(0,16);names.forEach((name,i)=>{const x=160+(i%4)*240,y=460+Math.floor(i/4)*220;ctx.fillStyle='#83aaff';ctx.beginPath();ctx.arc(x,y,5+Math.min(20,p.books.filter(b=>tagsFor(p,b).includes(name)).length),0,Math.PI*2);ctx.fill();ctx.font='22px sans-serif';ctx.fillStyle='#edf0f5';ctx.fillText(name.slice(0,10),x-65,y+60);});ctx.font='24px sans-serif';ctx.fillStyle='#9ca7b6';ctx.fillText('读过的书，在这里相遇。',75,1340);canvas.toBlob(blob=>{if(discardStaleShare(token))return;download(blob,'我的阅读宇宙-分享.png');});
 });
 $('theme').onclick=()=>{const light=document.documentElement.dataset.theme!=='light';document.documentElement.dataset.theme=light?'light':'dark';$('theme').textContent=light?'关灯':'开灯';try{localStorage.setItem('readingmap_theme',light?'light':'');}catch{}if(project.books.length)showView();};
 try{if(localStorage.getItem('readingmap_theme')==='light')$('theme').click();}catch{}

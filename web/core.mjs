@@ -2,7 +2,7 @@
 export const VERSION = 1;
 export {explorationRequest,validateExploration} from './exploration.mjs';
 import {coverUrl as atlasCover,normalizeProject as atlasProject,FORMAT as ATLAS_FORMAT} from './atlas-project.mjs';
-import {universeFields,validateAnalysis,validateLinks} from './universe-fields.mjs';
+import {universeFields,validateAnalysis,validateLinks,own,cardText} from './universe-fields.mjs';
 export {validateAnalysis,validateLinks} from './universe-fields.mjs';
 export {normalizeProject as explorationProject} from './atlas-project.mjs';
 import {makePublicAtlas} from './atlas-sharing.mjs';
@@ -84,11 +84,11 @@ export function normalize(input, files = {}) {
     const tagsFile = Object.entries(files).find(([name])=>name.endsWith('theme_tags.json'));
     if (tagsFile) {
       const tags=JSON.parse(tagsFile[1]);
-      for(const b of p.books) if(tags[b.id]) p.analysis[b.id]={tags:list(tags[b.id].tags).map(t=>text(t,60)).filter(safeName),summary:'',evidenceIds:[],basis:'imported',fingerprint:''};
+      for(const b of p.books) if(own(tags,b.id)) p.analysis[b.id]={tags:list(tags[b.id].tags).map(t=>text(t,60)).filter(safeName),summary:'',evidenceIds:[],basis:'imported',fingerprint:''};
     }
-    const active = new Set(p.books.flatMap(b=>p.analysis[b.id]?.tags||[]));
+    const active = new Set(p.books.flatMap(b=>own(p.analysis,b.id)?.tags||[]));
     for (const [name,content] of Object.entries(files)) if (/\/themes\/[^/]+\.md$/.test('/'+name)) {
-      const theme=name.split('/').at(-1).slice(0,-3); if(active.has(theme))p.cards[theme]=text(content);
+      const theme=name.split('/').at(-1).slice(0,-3); if(active.has(theme))p.cards[theme]=cardText(content);
     }
     const linksFile=Object.entries(files).find(([name])=>name.endsWith('links.json'));
     if(linksFile) {
@@ -121,7 +121,7 @@ export async function fingerprint(b, settings, model) {
   const hash=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(value));
   return Array.from(new Uint8Array(hash),x=>x.toString(16).padStart(2,'0')).join('');
 }
-export function tagsFor(p,b) { return unique((p.edits.books[b.id]?.tags ?? p.analysis[b.id]?.tags ?? b.tags ?? []).map(t=>p.settings.aliases?.[t]||t).filter(t=>t&&safeName(t))); }
+export function tagsFor(p,b) { return unique((own(p.edits.books,b.id)?.tags ?? own(p.analysis,b.id)?.tags ?? b.tags ?? []).map(t=>own(p.settings.aliases,t)||t).filter(t=>t&&safeName(t))); }
 export function tagCategory(p,tag) {
   if(p.books.some(b=>b.author===tag))return '作者';
   if(/^(华语|欧美|日本|韩国).*文学$/.test(tag))return '地域';
@@ -132,7 +132,7 @@ export function themeCards(p) {
   p=visibleProject(p);
   const groups=Object.create(null);for(const b of p.books)for(const t of tagsFor(p,b))if(safeName(t))(groups[t]??=[]).push(b);
   const cards={};for(const [t,books]of Object.entries(groups)) {
-    cards[t]=p.edits.cards[t] ?? p.cards[t] ?? `# ${t}\n\n- 相关书目：${books.length} 本\n${books.map(b=>`  - 《${b.title}》`).join('\n')}\n\n## 观点与问题\n${books.map(b=>`- 《${b.title}》：${p.analysis[b.id]?.summary||'尚无充分材料，等待补充。'}`).join('\n')}\n\n## 分歧与关联\n${[...p.links,...p.edits.links].filter(l=>books.some(b=>b.id===l.source)).map(l=>`- ${l.reason}`).join('\n')||'尚未确认具体关联。'}\n\n## 未解问题\n- 哪些判断仍需要更多材料或本人确认？`;
+    cards[t]=own(p.edits.cards,t) ?? own(p.cards,t) ?? `# ${t}\n\n- 相关书目：${books.length} 本\n${books.map(b=>`  - 《${b.title}》`).join('\n')}\n\n## 观点与问题\n${books.map(b=>`- 《${b.title}》：${own(p.analysis,b.id)?.summary||'尚无充分材料，等待补充。'}`).join('\n')}\n\n## 分歧与关联\n${[...p.links,...p.edits.links].filter(l=>books.some(b=>b.id===l.source)).map(l=>`- ${l.reason}`).join('\n')||'尚未确认具体关联。'}\n\n## 未解问题\n- 哪些判断仍需要更多材料或本人确认？`;
   }return cards;
 }
 export function buildViews(p) {
@@ -167,11 +167,16 @@ export function publicProject(p, selected, options={}) {
   const chosen=new Set(selected), out=emptyProject(), rejected=[];
   // Free-form summaries/cards may refer to hidden books or personal events. Rebuild from allowed fields by default.
   out.books=p.books.filter(b=>chosen.has(b.id)).map(b=>({id:b.id,title:b.title,author:b.author,readingTime:options.metrics?b.readingTime:0,notes:options.metrics?b.notes:0,finished:false,finishTime:'',rating:'',evidence:[]}));
-  for(const b of out.books)out.analysis[b.id]={tags:tagsFor(p,b),summary:'',evidenceIds:[],basis:'imported',fingerprint:''};
+  for(const b of p.books)if(chosen.has(b.id))out.analysis[b.id]={tags:tagsFor(p,b),summary:'',evidenceIds:[],basis:'imported',fingerprint:''};
   const hidden=p.books.filter(b=>!chosen.has(b.id)), blocked=hidden.map(b=>b.title).filter(Boolean);
-  out.books=out.books.filter(b=>!blocked.some(word=>b.title.includes(word)));
+  // A selected title containing a hidden title would make the hidden book identifiable when shared.
+  // Refuse the whole export instead of silently dropping a book the user explicitly selected.
+  const conflict=out.books.find(b=>blocked.some(word=>b.title.includes(word)));
+  if(conflict){const error=Error('所选书目与未公开书目存在书名冲突，无法安全公开；请调整公开范围后重试。');error.code='PUBLIC_TITLE_CONFLICT';throw error;}
   for(const b of out.books)if(blocked.some(word=>b.author.includes(word)))b.author='';
   const effective=new Set(out.books.map(b=>b.id));
+  // Keep the public object internally consistent: only final public books may keep analysis.
+  for(const id of Object.keys(out.analysis))if(!effective.has(id))delete out.analysis[id];
   for(const b of out.books)out.analysis[b.id].tags=out.analysis[b.id].tags.filter(t=>!blocked.some(word=>t.includes(word)));
   if(options.relations)for(const l of [...p.links,...p.edits.links]) {
     if(!effective.has(l.source)||l.targetType!=='book'||!effective.has(l.target))continue;
@@ -190,7 +195,7 @@ export function updateProject(previous,incoming) {
   // A current complete book list replaces the collection; retained IDs keep human work.
   const p=privatePackage(incoming),ids=new Set(p.books.map(b=>b.id));
   p.settings=previous.settings;
-  for(const b of p.books){if(previous.analysis[b.id])p.analysis[b.id]=previous.analysis[b.id];if(previous.edits.books[b.id])p.edits.books[b.id]=previous.edits.books[b.id];}
+  for(const b of p.books){if(own(previous.analysis,b.id))p.analysis[b.id]=previous.analysis[b.id];if(own(previous.edits.books,b.id))p.edits.books[b.id]=previous.edits.books[b.id];}
   const unchanged=new Set(p.books.filter(b=>JSON.stringify(b)===JSON.stringify(previous.books.find(old=>old.id===b.id))).map(b=>b.id));
   p.links=validateLinks(previous.links.filter(l=>l.basis!=='evidence'||(unchanged.has(l.source)&&unchanged.has(l.target))),p,true);p.edits.links=validateLinks(previous.edits.links,p,true);
   const removedTitles=previous.books.filter(b=>!ids.has(b.id)).map(b=>b.title);

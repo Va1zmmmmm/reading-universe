@@ -1,4 +1,9 @@
 // Shared whitelist for the original universe project and exploratory workspace.
+export const own=(object,key)=>object!=null&&Object.hasOwn(object,key)?object[key]:undefined;
+export function cardText(value){
+  if(typeof value!=='string'||value.length>20000)throw Error('主题卡必须是文字，且不能超过 20000 字；请保留原内容后缩短再保存。');
+  return value;
+}
 const text=(v,max=20000)=>typeof v==='string'?v.slice(0,max):'';
 const list=v=>Array.isArray(v)?v:[];
 const unique=v=>[...new Set(v)];
@@ -24,11 +29,11 @@ export function universeFields(input,books){
   p.settings.wordlist=unique(list(input.settings?.wordlist).map(t=>text(t,60).trim()).filter(t=>t&&safeName(t))).slice(0,100);
   for(const [alias,canonical]of Object.entries(input.settings?.aliases||{}))if(safeName(alias)&&alias.length<=60&&typeof canonical==='string'&&canonical.length<=60&&safeName(canonical))p.settings.aliases[alias]=canonical;
   const seen=new Set(books.map(b=>b.id));
-  for(const b of books)if(input.analysis?.[b.id])p.analysis[b.id]=validateAnalysis(input.analysis[b.id],b,p.settings.wordlist);
+  for(const b of books)if(own(input.analysis,b.id))p.analysis[b.id]=validateAnalysis(input.analysis[b.id],b,p.settings.wordlist);
   p.links=validateLinks(input.links,p);
-  for(const [name,card]of Object.entries(input.cards||{}))if(safeName(name))p.cards[text(name,60)]=text(card);
-  for(const b of books)if(input.edits?.books?.[b.id])p.edits.books[b.id]={tags:unique(list(input.edits.books[b.id].tags).map(t=>text(t,60)).filter(t=>t&&safeName(t))).slice(0,10)};
-  for(const [name,card]of Object.entries(input.edits?.cards||{}))if(safeName(name))p.edits.cards[text(name,60)]=text(card);
+  for(const [name,card]of Object.entries(input.cards||{}))if(safeName(name))p.cards[text(name,60)]=cardText(card);
+  for(const b of books)if(own(input.edits?.books,b.id))p.edits.books[b.id]={tags:unique(list(input.edits.books[b.id].tags).map(t=>text(t,60)).filter(t=>t&&safeName(t))).slice(0,10)};
+  for(const [name,card]of Object.entries(input.edits?.cards||{}))if(safeName(name))p.edits.cards[text(name,60)]=cardText(card);
   p.edits.links=validateLinks(input.edits?.links,p,true);
   p.edits.removedPairs=list(input.edits?.removedPairs).filter(k=>typeof k==='string'&&k.split('|').every(id=>seen.has(id))).slice(0,5000);
   for(const [key,value]of Object.entries(input.linkCache||{}))if(key.split('|').every(id=>seen.has(id))&&typeof value==='string'&&value.length<300)p.linkCache[key]=value;

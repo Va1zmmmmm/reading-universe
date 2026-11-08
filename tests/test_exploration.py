@@ -78,6 +78,12 @@ class TrailTests(unittest.TestCase):
         self.assertTrue(store.delete(jid,'owner'));gate.set();self.assertIsNone(store.get(jid,'owner'));store.closed=True
         store=s.Jobs(lambda *a:result(a[-1]),ttl=.05);jid=store.create('owner',payload());wait(store,jid);time.sleep(.06);store.cleanup();self.assertNotIn(jid,store.jobs);store.closed=True
     def test_preview_assets_default_closed_and_localhost_only(self):
+        import tempfile
+        # This contract test must also run against the public release, which
+        # deliberately excludes the author's private design-preview directory.
+        temporary=tempfile.TemporaryDirectory();self.addCleanup(temporary.cleanup)
+        preview=Path(temporary.name);(preview/'compose.html').write_text('<script src="compose.js"></script>')
+        preview_patch=patch.object(s,'PREVIEW',preview);preview_patch.start();self.addCleanup(preview_patch.stop)
         with self.assertRaises(ValueError):s.Server(('0.0.0.0',0),explore_preview=True)
         for enabled in (False,True):
             store=s.Jobs(lambda *a:result(a[-1]));server=s.Server(('127.0.0.1',0),jobs=store,explore_preview=enabled);threading.Thread(target=server.serve_forever,daemon=True).start();base=f'http://127.0.0.1:{server.server_port}'

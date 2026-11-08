@@ -14,7 +14,7 @@ ID 必填且唯一；可用 id 代替 bookId。书目字段支持 weread-skill �
 ## 私人项目
 
 format=reading-universe-private，version=1。包含 books（标准化元数据和 evidence）、analysis（标签/摘要/证据ID/缓存指纹）、links、linkCache、cards、edits、settings。
-evidence 含 id/text/kind/source/included；可逐条关闭用于 AI 分析。edits 独立保留主题、卡片、人工关联与移除配对；settings 有 wordlist 和 aliases。
+evidence 含 id/text/kind/source/included；included 仅表示“允许这段材料发送给 AI”，不表示材料删除/不可回查：已保存探索引文在 included=false 后仍可保存、重开，但不会进入 AI 请求。edits 独立保留主题、卡片、人工关联与移除配对；settings 有 wordlist 和 aliases。
 导入时仅接收已定义字段，忽略 key、cookie、会话令牌等字段。
 
 links 为 source/target/targetType/type/reason/evidenceIds/basis；targetType 为 book/concept/external，type 为 same_topic/complement/contrast/reference，basis 为 evidence/manual/imported。引用无法回溯到原书时标为 imported。
@@ -30,6 +30,7 @@ exploration 每主题有 id/name/title/opening/entry/start/endTitle/endBody/node
 ## 公开网站包
 
 不直接导出私人项目。根据所选书目重建 graph_data.js/universe_data.js 与专题卡；只包含书名、作者、主题、可选指标和在库书的关联拓扑。原文、日期、评分和自由文字不输出。
+公开前逐本检查：若所选书的标题包含未公开书目（含已排除书目）的标题，整次预览/导出明确拒绝并提示书名冲突，不得静默剔除所选书；错误信息与公开产物均不得带出隐藏书名或私人内容。成功返回的公开对象只保留最终公开书目及其 analysis，关联两端都必须属于最终公开书目，不得留下孤儿引用。
 包内 index.html、viewer-data.js、universe.js、lib/vis-network.min.js 及数据脚本可直接离线打开。
 
 显式启用探索时另含 reading-atlas-public v1：books 只含 id/title/author；themes 有重新编号的 id、basis、name/title/opening/entry/start/endTitle/endBody/nodes。节点有重新编号的 id、title/subtitle/context/observation、bookId/materialKind、choices；quote 可省略，存在时只含经源材料逐字核验、单独确认公开的 excerpt。去路仅保留选中目标；缺开场、不可达、未确认解读或文字引用隐藏书目拒绝导出。未选择引文的节点仍有完整解读，读者看到原文未公开提示。

@@ -233,6 +233,23 @@ class Handler(SimpleHTTPRequestHandler):
     def setup(self):
         super().setup();self.connection.settimeout(15)
     def log_message(self,*args):pass
+    def send_head(self):
+        # Shared by GET and inherited HEAD. Validate the file selected by the
+        # parent too, so a directory index symlink cannot escape the web root.
+        path=Path(self.translate_path(self.path)).resolve()
+        root=WEB.resolve()
+        if not path.is_relative_to(root):
+            self.send_error(404,'not found');return None
+        if path.is_dir():
+            for name in ('index.html','index.htm'):
+                candidate=path/name
+                if candidate.exists():
+                    if not candidate.resolve().is_relative_to(root):
+                        self.send_error(404,'not found');return None
+                    break
+            else:
+                self.send_error(404,'not found');return None
+        return super().send_head()
     def end_headers(self):
         # Keep proxies from injecting analytics into a private reading workspace.
         self.send_header('Cache-Control','no-store, no-transform');self.send_header('X-Content-Type-Options','nosniff')
