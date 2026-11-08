@@ -7,7 +7,7 @@ import zipfile
 
 REPO=Path(__file__).resolve().parents[1]
 ROOT_FILES=['server.py','exploration.py','Dockerfile','README.md','LICENSE','docs/DEPLOY.md','docs/USER_GUIDE.md','docs/DATA_FORMAT.md','docs/ONLINE_ARCHITECTURE.md','docs/RELEASE_NOTES.md','deploy/reading-universe.service','deploy/nginx.conf.example']
-WEB_FILES=['app.css','app.mjs','atlas-project.mjs','atlas-sharing.mjs','atlas-onboarding.mjs','atlas-onboarding.css','core.mjs','exploration.mjs','guide.html','index.html','project-actions.mjs','public-atlas-contract.mjs','public-reader-runtime.js','public-reader.css','public-reader.html','public-reader.js','sample-input.json','universe-fields.mjs','universe.js','viewer-data.js','viewer.html','zip.mjs','examples/author-public.json','examples/demo-project.json','lib/vis-network.min.js']
+WEB_FILES=['app.css','app.mjs','atlas-project.mjs','atlas-sharing.mjs','atlas-onboarding.mjs','atlas-onboarding.css','core.mjs','exploration.mjs','guide.html','index.html','project-actions.mjs','public-atlas-contract.mjs','public-reader-runtime.js','public-reader.css','public-reader.html','public-reader.js','sample-input.json','share-operation.mjs','universe-fields.mjs','universe.js','viewer-data.js','viewer.html','zip.mjs','examples/author-public.json','examples/demo-project.json','lib/vis-network.min.js']
 ATLAS_FILES=['compose.css','compose.js','explore.css','index.html','themes.css','trail-story.css','trail.css','workspace-core.mjs','workspace-zip.mjs','workspace.css','workspace.js']
 
 def sources():return ROOT_FILES+['web/'+p for p in WEB_FILES]+['web/atlas/'+p for p in ATLAS_FILES]

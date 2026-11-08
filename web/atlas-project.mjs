@@ -11,7 +11,10 @@ const strings=v=>Array.isArray(v)?[...new Set(v.filter(x=>typeof x==='string'&&x
 export const FORMAT='reading-atlas-workspace';
 export function materialLabel(e){const kind=({highlight:'划线',review:'书评',card:'读书卡',note:'笔记'})[e.kind]||'材料';return e.sourceLocator?.ordinal?`${kind} ${e.sourceLocator.ordinal}`:e.source||kind;}
 export function findEvidence(p,q){
-  const book=p.books.find(b=>b.id===q?.bookId&&b.included!==false),evidence=book?.evidence.find(e=>e.id===q?.evidenceId&&e.included!==false);
+  // `included` 的语义是“允许这段材料发送给 AI”，不是“材料存在/可用于回查”。
+  // 已保存的探索引文是本地历史引用，取消勾选后仍须可保存、可重开。
+  // 发送 AI 的路径各自保留 included 闸（explorationRequest / validateExploration / app fragments）。
+  const book=p.books.find(b=>b.id===q?.bookId&&b.included!==false),evidence=book?.evidence.find(e=>e.id===q?.evidenceId);
   return evidence&&typeof q.excerpt==='string'&&q.excerpt.trim()&&evidence.text.includes(q.excerpt)?{book,evidence}:null;
 }
 function normalizeEvidence(items,bookId){

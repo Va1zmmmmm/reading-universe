@@ -1,6 +1,6 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {normalize,privatePackage,explorationProject,publicProject,buildViews,updateProject,fingerprint} from '../web/core.mjs';
+import {normalize,privatePackage,explorationProject,explorationRequest,publicProject,buildViews,updateProject,fingerprint} from '../web/core.mjs';
 import {atlasFixture} from './fixtures/atlas-project.mjs';
 
 test('formal to exploration to formal preserves known metadata, stable evidence and all journeys',()=>{
@@ -28,9 +28,24 @@ test('cross-entry saving does not change analysis hashes, including valid long b
   assert.equal(privatePackage(explorationProject(long)).books[0].evidence[0].id,id+':e0');
 });
 test('bad evidence, forged quotes and invalid saved routes reject the whole import',()=>{
-  for(const mutate of [p=>p.books[0].evidence[1].id='stable-door',p=>p.exploration.themes[0].nodes[0].quote.excerpt='伪造原文',p=>p.journey.sessions[0].at=99,p=>p.books[0].evidence[0].included=false]){
+  for(const mutate of [p=>p.books[0].evidence[1].id='stable-door',p=>p.exploration.themes[0].nodes[0].quote.excerpt='伪造原文',p=>p.journey.sessions[0].at=99]){
     const p=atlasFixture();mutate(p);assert.throws(()=>normalize(p));assert.throws(()=>explorationProject(p));
   }
+});
+test('unchecked material stays valid as saved exploration history but is not eligible for AI requests',()=>{
+  const p=atlasFixture();p.books[0].evidence[0].included=false;
+  const normalized=normalize(p),saved=privatePackage(p),explored=explorationProject(saved),round=privatePackage(explored);
+  for(const out of [normalized,saved,explored,round]){
+    assert.equal(out.books[0].evidence.find(e=>e.id==='stable-door').included,false);
+    assert.equal(out.exploration.themes[0].nodes[0].quote.evidenceId,'stable-door');
+    assert.equal(out.exploration.themes[0].nodes[0].quote.excerpt,'门口停了一会儿。');
+  }
+  const selections=[{bookId:'own',evidenceId:'stable-door',text:'今天出发，门口停了一会儿。'},{bookId:'own',evidenceId:'stable-train',text:'车窗外有一棵树。它向后移动。'}];
+  const topic={id:'trail-test',name:'停留',question:'这一段如何继续？'};
+  assert.throws(()=>explorationRequest(saved,selections,topic),/排除|材料|片段/);
+  p.books[0].evidence[0].included=true;
+  const request=explorationRequest(p,selections,topic);
+  assert.equal(request.books.length,1);assert.equal(request.books[0].evidence.length,2);
 });
 test('incremental updates retain compatible exploration and reject changing its cited evidence',()=>{
   const p=normalize(atlasFixture()),next=updateProject(p,privatePackage(p));assert.deepEqual(next.journey,p.journey);assert.deepEqual(next.exploration,p.exploration);

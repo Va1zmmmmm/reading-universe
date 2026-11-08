@@ -22,6 +22,11 @@
 
 function initUniverse(hooks) {
   const U = window.UNIVERSE;
+  if (!U.books.length) {
+    const stats = document.getElementById('ustats');
+    if (stats) stats.textContent = '暂无可显示的书目；先在图谱页导入或保留书目。';
+    return;
+  }
   const cv = document.getElementById('ucv');
   const ctx = cv.getContext('2d');
   const tip = document.getElementById('utip');
@@ -96,7 +101,11 @@ function initUniverse(hooks) {
 
   // 英雄星：阅读时长 top1 是唯一主角；top2/3 次级强调
   const byRt = [...stars].sort((a, b) => b.b.rt - a.b.rt);
-  const hero = byRt[0];
+  // 小书目可能全部被判为彗星（没有恒星）：保留一个用于相机取景的锚点，避免 hero 为空。
+  const hero = byRt[0] || {
+    b: heroBook, g: galByName[heroBook.theme] || galaxies[0],
+    r: starR(heroBook.rt), light: starLight(heroBook.notes), rank: 0,
+  };
   byRt.forEach((s, i) => { s.rank = i; });
 
   // 彗星：星野外环轨道，克制
@@ -198,11 +207,20 @@ function initUniverse(hooks) {
       x0 = Math.min(x0, g.x - m); x1 = Math.max(x1, g.x + m);
       y0 = Math.min(y0, g.y - m); y1 = Math.max(y1, g.y + m);
     }
+    // 小书目可能全部被判为彗星（没有恒星）：只按星系取景会得到空画面。
+    // 此时把彗星轨道纳入初始视野，并以星系锚点居中，保证初始就能看见彗星。
+    if (!stars.length) {
+      for (const c of comets) {
+        const m = c.orbit + c.r + 24;
+        x0 = Math.min(x0, -m); x1 = Math.max(x1, m);
+        y0 = Math.min(y0, -m * 0.74); y1 = Math.max(y1, m * 0.74);
+      }
+    }
     cam.s = Math.min(W / ((x1 - x0) * 1.02), H / ((y1 - y0) * 1.02));
     fitScale = cam.s;
     // 星野占满画面约 80%，英雄星所在星系落在画面左 42%、上 46% 处
-    cam.x = hero.g.x + 0.08 * W / cam.s;
-    cam.y = hero.g.y + 0.04 * H / cam.s;
+    if (!stars.length) { cam.x = hero.g.x; cam.y = hero.g.y; }
+    else { cam.x = hero.g.x + 0.08 * W / cam.s; cam.y = hero.g.y + 0.04 * H / cam.s; }
   }
   resize(); fit();
   // 调试机位：?universe&uzoom=2.5 → 以当前视点放大 N 倍（自查深缩放排版用）

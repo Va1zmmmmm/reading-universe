@@ -169,9 +169,14 @@ export function publicProject(p, selected, options={}) {
   out.books=p.books.filter(b=>chosen.has(b.id)).map(b=>({id:b.id,title:b.title,author:b.author,readingTime:options.metrics?b.readingTime:0,notes:options.metrics?b.notes:0,finished:false,finishTime:'',rating:'',evidence:[]}));
   for(const b of p.books)if(chosen.has(b.id))out.analysis[b.id]={tags:tagsFor(p,b),summary:'',evidenceIds:[],basis:'imported',fingerprint:''};
   const hidden=p.books.filter(b=>!chosen.has(b.id)), blocked=hidden.map(b=>b.title).filter(Boolean);
-  out.books=out.books.filter(b=>!blocked.some(word=>b.title.includes(word)));
+  // A selected title containing a hidden title would make the hidden book identifiable when shared.
+  // Refuse the whole export instead of silently dropping a book the user explicitly selected.
+  const conflict=out.books.find(b=>blocked.some(word=>b.title.includes(word)));
+  if(conflict){const error=Error('所选书目与未公开书目存在书名冲突，无法安全公开；请调整公开范围后重试。');error.code='PUBLIC_TITLE_CONFLICT';throw error;}
   for(const b of out.books)if(blocked.some(word=>b.author.includes(word)))b.author='';
   const effective=new Set(out.books.map(b=>b.id));
+  // Keep the public object internally consistent: only final public books may keep analysis.
+  for(const id of Object.keys(out.analysis))if(!effective.has(id))delete out.analysis[id];
   for(const b of out.books)out.analysis[b.id].tags=out.analysis[b.id].tags.filter(t=>!blocked.some(word=>t.includes(word)));
   if(options.relations)for(const l of [...p.links,...p.edits.links]) {
     if(!effective.has(l.source)||l.targetType!=='book'||!effective.has(l.target))continue;
