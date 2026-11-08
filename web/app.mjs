@@ -27,11 +27,11 @@ async function loadFiles(selected) {
   const bookFiles=candidates.filter(([name,v])=>name.split('/').at(-1)==='books.json'&&Array.isArray(v.books));
   const primary=restored.length?restored:bookFiles.length?bookFiles:candidates.filter(([,v])=>Array.isArray(v.books));
   if(primary.length!==1)throw Error(primary.length?'找到多份书目或项目包，请只选择一个人的一份数据。':'没有找到 books.json 或私人项目包。');
-  const incoming=normalize(primary[0][1],files);project=$('update-existing').checked&&project.books.length&&!isExample?updateProject(project,incoming):incoming;preview=null;isExample=false;
+  const incoming=normalize(primary[0][1],files);if(running)throw Error('请先取消生成，再更换项目。');project=$('update-existing').checked&&project.books.length&&!isExample?updateProject(project,incoming):incoming;preview=null;isExample=false;
   $('wordlist').value=project.settings.wordlist.join('，');$('aliases').value=Object.entries(project.settings.aliases).map(([a,b])=>a+'='+b).join('\n');render();notice(`已在本机读取 ${project.books.length} 本书。原始文件没有上传。`);
 }
 for(const id of ['files','folder'])$(id).addEventListener('change',guard(async()=>{const files=[...$(id).files];$(id).value='';if(files.length)await loadFiles(files);}));
-$('example').onclick=guard(async()=>{if(running)throw Error('请先取消生成。');project=normalize(await(await fetch('examples/author-public.json')).json());isExample=true;preview=null;render();notice('正在浏览作者公开案例。创建自己的版图时会使用全新的项目。');});
+$('example').onclick=guard(async()=>{if(running)throw Error('请先取消生成。');const next=normalize(await(await fetch('examples/author-public.json')).json());if(running)throw Error('请先取消生成。');project=next;isExample=true;preview=null;render();notice('正在浏览作者公开案例。创建自己的版图时会使用全新的项目。');});
 $('reset').onclick=guard(async()=>{if(running)throw Error('请先取消生成。');if(project.books.length&&!confirm('清空当前项目？尚未下载的内容将丢失。'))return;project=emptyProject();preview=null;isExample=false;$('key').value='';$('sharing').hidden=true;render();notice('已清空浏览器中的当前项目。');});
 function showView() {
   const views=buildViews(preview||project);window.__readingViews=views;
@@ -96,7 +96,7 @@ $('generate').onclick=guard(async()=>{
   project.settings.wordlist=[...new Set($('wordlist').value.split(/[,，]/).map(t=>t.trim()).filter(t=>t&&!['__proto__','constructor','prototype'].includes(t)))].slice(0,100);
   project.settings.aliases={};for(const line of $('aliases').value.split('\n')){const [a,b]=line.split('=').map(v=>v.trim());if(a&&b&&a.length<=60&&b.length<=60&&!['__proto__','constructor','prototype'].includes(a)&&!['__proto__','constructor','prototype'].includes(b))project.settings.aliases[a]=b;}
   const todo=[];for(const b of project.books.filter(b=>b.included!==false)){const hash=await fingerprint(b,project.settings,credentials.model+'@'+credentials.provider);if(project.analysis[b.id]?.fingerprint!==hash)todo.push([b,hash]);}
-  running=false;aborted=false;stopReason='';tasksUsed=0;taskLimit=Math.max(1,Math.min(300,Number($('task-budget').value)||60));$('generate').disabled=true;$('cancel').hidden=false;$('save').disabled=true;$('key').value='';
+  aborted=false;stopReason='';tasksUsed=0;taskLimit=Math.max(1,Math.min(300,Number($('task-budget').value)||60));$('generate').disabled=true;$('cancel').hidden=false;$('save').disabled=true;$('key').value='';
   notice(`待分析 ${todo.length} 本，书目分析约 ${Math.ceil(todo.length/8)} 个任务，关联分析最多 7 个任务。每任务最多 2 次调用；本轮上限 ${taskLimit} 个任务。`);
   let failures=[];
   try{
